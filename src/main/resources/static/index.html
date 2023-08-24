@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Queue UI</title>
+    <!-- Add Bootstrap CSS for styling -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <!-- Add AngularJS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        .text {
+            color: whitesmoke;
+        }
+        .big-font {
+            font-size: 3em;
+        }
+        .mid-font {
+            font-size: 2em;
+        }
+        .card {
+            margin: 15px;
+        }
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .flex-item {
+            flex-grow: 1;
+            text-align: center;
+        }
+    </style>
+</head>
+<body ng-app="queueApp" ng-controller="QueueController as queue" class="bg-dark">
+
+<div class="container">
+    <div class="row">
+        <div class="col text-right text">
+            <h2>{{queue.currentTime | date:'HH:mm'}}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <h1 class="text-center text">Сейчас подошла ваша очередь</h1>
+    <div class="flex-container">
+        <div class="flex-item" ng-repeat="ticket in queue.servedTickets | orderBy: 'type'">
+            <div class="card text-center " ng-class="{'bg-primary': ticket.type === 'BASIC', 'bg-warning': ticket.type === 'BENEFIT'}">
+                <div class="card-body">
+                    <h1 class="big-font text">{{ticket.number}}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<div class="container">-->
+<!--    <h1 class="text-center">Будьте готовы</h1>-->
+<!--    <div class="flex-container">-->
+<!--        <div class="flex-item " ng-repeat="ticket in queue.waitingTickets">-->
+<!--            <div class="card text-center bg-secondary">-->
+<!--                <div class="card-body">-->
+<!--                    <h1 class="mid-font">{{ticket.number}}</h1>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<script>
+    angular.module('queueApp', []).controller('QueueController', ['$http', '$interval', function ($http, $interval) {
+        var self = this;
+
+        self.servedTickets = [];
+        self.waitingTickets = [];
+        self.stats = {};
+
+        var loadTickets = function() {
+            $http.get('/api/display/tickets/served')
+                .then(function (response) {
+                    self.servedTickets = response.data;
+                });
+
+            /*$http.get('/api/display/tickets/wait/10')
+                .then(function (response) {
+                    self.waitingTickets = response.data;
+                });
+
+            $http.get('/api/display/tickets/statistics')
+                .then(function (response) {
+                    self.stats = response.data;
+                });*/
+        }
+
+        // Load tickets initially and then every 5 seconds
+        loadTickets();
+        $interval(loadTickets, 5000);
+
+        // Set the current time
+        self.currentTime = new Date();
+
+        // Update the time every second
+        $interval(function () {
+            self.currentTime = new Date();
+        }, 1000);
+    }]);
+</script>
+</body>
+</html>

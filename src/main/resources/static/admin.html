@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+    <title>Admin Page</title>
+    <!-- Add Bootstrap CSS for styling -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <!-- Add AngularJS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+
+</head>
+<body ng-app="adminApp" ng-controller="AdminController as admin">
+<div class="container">
+    <div class="row">
+        <div class="col-md-9 text-center">
+            <h1>Abitur Queue</h1>
+        </div>
+        <div class="col-md-3 d-flex align-items-center justify-content-end">
+            <input type="text" class="form-control form-control-sm" ng-model="admin.code" placeholder="Код">
+            <div class="btn btn-large">SEND</div>
+        </div>
+    </div>
+
+
+    <!--<div class="row">
+        <div class="col text-right">
+            <button class="btn btn-success" ng-click="admin.addNewTickets()">Add 700 New Tickets</button>
+        </div>
+        &lt;!&ndash;<div class="col text-left">
+            <button class="btn btn-secondary" ng-click="manager.printAllTicketsPdf()">PDF Tickets</button>
+        </div>&ndash;&gt;
+    </div>-->
+    <form class="mb-3 mt-15" ng-submit="admin.search()">
+        <div class="form-group">
+            <input type="text" class="form-control" ng-model="admin.searchQuery" placeholder="Поиск по номеру...">
+        </div>
+    </form>
+    <table class="table">
+        <thead>
+        <tr>
+            <th ng-click="admin.sortBy('number')">№</th>
+            <th ng-click="admin.sortBy('type')">Тип</th>
+            <th ng-click="admin.sortBy('status')">СТАТУС</th>
+            <th ng-click="admin.sortBy('startWaitingTimestamp')">Получил билет</th>
+            <th ng-click="admin.sortBy('startServedTimestamp')">У оператора</th>
+            <th ng-click="admin.sortBy('startInProgressTimestamp')">У менеджера</th>
+            <th ng-click="admin.sortBy('startCancelTimestamp')">Отменен</th>
+            <th>Ожидание</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="ticket in admin.tickets | filter : {number: admin.searchQuery} | orderBy: -admin.sortByField">
+            <td>{{ticket.number}}</td>
+            <td>{{ticket.type}}</td>
+            <td>{{ticket.status}}</td>
+            <td>{{ticket.startWaitingTimestamp | date:'HH:mm:ss'}}</td>
+            <td>{{ticket.startServedTimestamp | date:'HH:mm:ss'}}</td>
+            <td>{{ticket.startInProgressTimestamp | date:'HH:mm:ss'}}</td>
+            <td>{{ticket.startCancelTimestamp | date:'HH:mm:ss'}}</td>
+            <td><span ng-if="ticket.startInProgressTimestamp">{{(ticket.startServedTimestamp - ticket.startWaitingTimestamp) / 60000 | number: 0}} +
+                {{(ticket.startInProgressTimestamp - ticket.startServedTimestamp) / 60000 | number: 0}} =
+                {{(ticket.startInProgressTimestamp - ticket.startWaitingTimestamp) / 60000 | number: 0}}m</span></td>
+            <td>
+                <button class="btn btn-warning" ng-click="admin.cancelTicket(ticket.id)">Отменить</button>
+                <button class="btn btn-danger" ng-click="admin.deleteTicket(ticket.id)">Удалить</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    var app = angular.module('adminApp', ['ngRoute']);
+
+
+    app.config(['$locationProvider', function($locationProvider) {
+        $locationProvider.html5Mode(true);
+    }]);
+
+    app.controller('AdminController', function($http, $location) {
+            var self = this;
+            self.code = $location.search().code;
+            self.tickets = [];
+            self.searchQuery = '';
+            self.sortByField = 'startWaitingTimestamp';
+            self.sortReverse = false;
+
+            self.loadTickets = function() {
+                var url = '/api/display/tickets/admin';
+                $http.get(url, {headers: {'code': self.code}})
+                    .then(function(response) {
+                        self.tickets = response.data;
+                    });
+            };
+
+            self.sortBy = function(field) {
+                if (self.sortByField === field) {
+                    self.sortReverse = !self.sortReverse;
+                } else {
+                    self.sortByField = field;
+                    self.sortReverse = false;
+                }
+            };
+
+            self.deleteTicket = function(ticketId) {
+                $http.put('/api/manager/' + ticketId + '/toDelete', {headers: {'code': self.code}})
+                    .then(function() {
+                        self.loadTickets();
+                    });
+            };
+
+            self.cancelTicket = function(ticketId) {
+                $http.put('/api/manager/' + ticketId + '/toCancel', {headers: {'code': self.code}})
+                    .then(function() {
+                        self.loadTickets();
+                    });
+            };
+
+            // Load tickets initially
+            self.loadTickets();
+        });
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Статистика билетов</title>
+    <!-- Подключение AngularJS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <!-- Подключение библиотеки Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body ng-app="ticketStatsApp" ng-controller="TicketStatsController as ticketStats">
+
+<canvas id="ticketStatsChart"></canvas>
+
+<script>
+    angular.module('ticketStatsApp', [])
+        .controller('TicketStatsController', ['$http', function ($http) {
+            var self = this;
+
+            // Загрузка статистических данных с сервера
+            $http.get('/tickets/statistics')
+                .then(function(response) {
+                    var data = response.data;
+
+                    // Получение данных статистики из ответа сервера
+                    var labels = data.dates;
+                    var ticketsInProcess = data.ticketsInProcess;
+                    var avgProcessTime = data.avgProcessTime;
+
+                    // Создание графика с использованием Chart.js
+                    var chart = new Chart('ticketStatsChart', {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Билеты в процессе',
+                                    data: ticketsInProcess,
+                                    fill: false,
+                                    borderColor: 'blue',
+                                    backgroundColor: 'blue'
+                                },
+                                {
+                                    label: 'Среднее время обслуживания',
+                                    data: avgProcessTime,
+                                    fill: false,
+                                    borderColor: 'green',
+                                    backgroundColor: 'green'
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                x: {
+                                    display: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Даты'
+                                    }
+                                },
+                                y: {
+                                    display: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Количество билетов / Время (мин)'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(function(error) {
+                    console.error('Ошибка при загрузке статистики:', error);
+                });
+        }]);
+</script>
+
+</body>
+</html>

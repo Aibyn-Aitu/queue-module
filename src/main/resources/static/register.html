@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+    <title>Register Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+
+    <style>
+        .big-font {
+            font-size: 2em;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between; /* This will center the buttons with space between */
+            align-items: center;
+            height: 100vh; /* This will make the row full screen */
+        }
+        .btn {
+            width: 90%; /* Adjust to your preferred width */
+            height: 60%; /* Adjust to your preferred height */
+            font-size: 48px; /* Adjust to your preferred font size */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn1 {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn2 {
+            background-color: #a89a1f;
+            color: white;
+        }
+    </style>
+</head>
+<body ng-app="managerApp" ng-controller="ManagerController as manager">
+<div class="container">
+    <h1 class="text-center">Register Page</h1>
+    <h3 class="text-center">В очереди {{manager.stats.waitCount}}</h3>
+
+<!--    <input type="text" class="input" ng-model="registerTicketId"/>-->
+<!--    <button class="btn btn-info" ng-click="manager.toWaitTicket(registerTicketId)">REGISTER</button>-->
+    <div class="container-fluid">
+        <div class="container-fluid">
+            <div class="row">
+                <button ng-disabled="manager.loadingTickets" ng-click="manager.toWaitTicket(manager.createdTickets.ticketBasic.id)" type="button" class="btn btn-primary btn-lg btn1">BASIC {{manager.createdTickets.ticketBasic.number}}</button>
+                <button ng-disabled="manager.loadingTickets" ng-click="manager.toWaitTicket(manager.createdTickets.ticketBenefit.id)" type="button" class="btn btn-waring btn-lg btn2">MASTER {{manager.createdTickets.ticketBenefit.number}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var app = angular.module('managerApp', ['ngRoute']);
+
+    app.config(['$locationProvider', function($locationProvider) {
+        $locationProvider.html5Mode(true);
+    }]);
+
+    app.controller('ManagerController', function($http, $location) {
+            var self = this;
+            self.code = $location.search().code;
+            self.createdTickets = [];
+            self.createdTickets = [];
+            self.createdTickets = {
+                ticketBasic: null,
+                ticketBenefit: null
+            };
+            self.loadingTickets = false;
+            self.stats = {};
+
+            // Fetch created tickets
+            self.getCreatedTickets = function() {
+                self.loadingTickets = true;
+                $http.get('/api/display/tickets/created', {headers: {'code': self.code}})
+                    .then(function(response) {
+                        self.createdTickets = response.data;
+                        self.loadingTickets = false;
+
+                        $http.get('/api/display/tickets/statistics', {headers: {'code': self.code}})
+                            .then(function (response) {
+                                self.stats = response.data;
+                            });
+                    });
+            };
+            self.getCreatedTickets();
+
+            self.toWaitTicket = function(id) {
+                self.loadingTickets = true;
+                $http.put('/api/manager/' + id + '/toWait', {headers: {'code': self.code}})
+                    .then(function(response) {
+                        self.loadingTickets = false;
+                        console.log("Moved ticket to wait");
+                        // Reload created tickets
+                        self.getCreatedTickets();
+                    });
+            };
+        });
+</script>
+</body>
+</html>
