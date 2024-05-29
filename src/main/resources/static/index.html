@@ -43,7 +43,6 @@
 
 <div class="container">
     <h1 class="text-center text">Сейчас подошла ваша очередь</h1>
-    <h1 class="text-center text">Girls</h1>
     <div class="flex-container">
         <div class="flex-item" ng-repeat="ticket in queue.servedTickets | orderBy: 'type'">
             <div class="card text-center " ng-class="{'bg-warning': ticket.type === 'BASIC', 'bg-primary': ticket.type === 'BENEFIT'}">
