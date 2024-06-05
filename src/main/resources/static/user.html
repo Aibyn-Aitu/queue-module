@@ -13,47 +13,39 @@
             font-size: 2em;
         }
         .row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            margin-top: 20px;
         }
-        .btn {
-            width: 90%;
-            height: 60%;
-            font-size: 48px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .form-control {
+            font-size: 1.5em;
+            height: calc(1.5em + 1rem + 2px);
         }
-        .input {
-            font-size: 2em;
-            width: 90%;
-            height: 60px;
-            margin-bottom: 20px;
+        .btn-lg {
+            font-size: 1.5em;
+            padding: 0.75rem 1.25rem;
+        }
+        .container {
+            max-width: 600px;
         }
     </style>
 </head>
 <body ng-app="registerApp" ng-controller="RegisterController as registerCtrl">
 <div class="container">
     <h1 class="text-center">Register Page</h1>
-    <div class="row">
-        <div class="col-6">
-            <input type="text" class="form-control input" ng-model="registerCtrl.user.firstname" placeholder="Имя"/>
+    <form>
+        <div class="form-group">
+            <input type="text" class="form-control" ng-model="registerCtrl.user.firstname" placeholder="Имя" required/>
         </div>
-        <div class="col-6">
-            <input type="text" class="form-control input" ng-model="registerCtrl.user.lastname" placeholder="Фамилия"/>
+        <div class="form-group">
+            <input type="text" class="form-control" ng-model="registerCtrl.user.lastname" placeholder="Фамилия" required/>
         </div>
-        <div class="col-6">
-            <input type="text" class="form-control input" ng-model="registerCtrl.user.email" placeholder="Почта"/>
+        <div class="form-group">
+            <input type="email" class="form-control" ng-model="registerCtrl.user.email" placeholder="Почта" required/>
         </div>
-        <div class="col-6">
-            <input type="text" class="form-control input" ng-model="registerCtrl.user.iin" placeholder="ИИН"/>
+        <div class="form-group">
+            <input type="text" class="form-control" ng-model="registerCtrl.user.iin" placeholder="ИИН" required/>
         </div>
-        <div class="col-6">
-            <button ng-disabled="registerCtrl.loading" ng-click="registerCtrl.createUser()" type="button" class="btn btn-primary btn-lg">REGISTER</button>
-        </div>
-    </div>
+        <button ng-disabled="registerCtrl.loading" ng-click="registerCtrl.createUser()" type="button" class="btn btn-primary btn-lg btn-block">REGISTER</button>
+    </form>
 </div>
 
 <script>
@@ -61,7 +53,7 @@
 
     app.controller('RegisterController', function($http, $window) {
         var self = this;
-        self.user = { iin: '' , firstname: '', lastname: '', email: ''};
+        self.user = { iin: '', firstname: '', lastname: '', email: '' };
         self.loading = false;
 
         self.moveToWait = function(userId) {
@@ -85,7 +77,6 @@
                 });
         };
     });
-
 </script>
 </body>
 </html>
