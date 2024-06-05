@@ -5,6 +5,7 @@ import com.itextpdf.text.pdf.*;
 import kz.aitu.abiturqueue.model.dto.CreatedTicketDTO;
 import kz.aitu.abiturqueue.model.dto.TicketStatisticDTO;
 import kz.aitu.abiturqueue.model.entity.Ticket;
+import kz.aitu.abiturqueue.model.entity.User;
 import kz.aitu.abiturqueue.repository.TicketRepository;
 import kz.aitu.abiturqueue.service.TicketService;
 import lombok.AllArgsConstructor;
@@ -14,12 +15,10 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,6 +27,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -106,6 +107,12 @@ public class TicketController {
     @GetMapping("/statistics/wait")
     public double getStatisticsWait() {
         return ticketService.calculateClientWaitTime();
+    }
+
+    @GetMapping("/find-by-id")
+    public ResponseEntity<Ticket> findTicketById(@RequestParam Long id){
+        Optional<Ticket> ticket = ticketService.getTicketById(id);
+        return ticket.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 }
 

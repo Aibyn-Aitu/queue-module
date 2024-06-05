@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+    <title>Register Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+
+    <style>
+        .big-font {
+            font-size: 2em;
+        }
+        .row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .btn {
+            width: 90%;
+            height: 60%;
+            font-size: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .input {
+            font-size: 2em;
+            width: 90%;
+            height: 60px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body ng-app="registerApp" ng-controller="RegisterController as registerCtrl">
+<div class="container">
+    <h1 class="text-center">Register Page</h1>
+    <div class="row">
+        <div class="col-6">
+            <input type="text" class="form-control input" ng-model="registerCtrl.user.firstname" placeholder="Имя"/>
+        </div>
+        <div class="col-6">
+            <input type="text" class="form-control input" ng-model="registerCtrl.user.lastname" placeholder="Фамилия"/>
+        </div>
+        <div class="col-6">
+            <input type="text" class="form-control input" ng-model="registerCtrl.user.email" placeholder="Почта"/>
+        </div>
+        <div class="col-6">
+            <input type="text" class="form-control input" ng-model="registerCtrl.user.iin" placeholder="ИИН"/>
+        </div>
+        <div class="col-6">
+            <button ng-disabled="registerCtrl.loading" ng-click="registerCtrl.createUser()" type="button" class="btn btn-primary btn-lg">REGISTER</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var app = angular.module('registerApp', ['ngRoute']);
+
+    app.controller('RegisterController', function($http, $window) {
+        var self = this;
+        self.user = { iin: '' , firstname: '', lastname: '', email: ''};
+        self.loading = false;
+
+        self.moveToWait = function(userId) {
+            $window.localStorage.setItem('userId', userId);
+            $window.location.href = '/verification.html';
+        };
+
+        self.createUser = function() {
+            if (!self.user.iin) {
+                alert("IIN cannot be empty");
+                return;
+            }
+            self.loading = true;
+            $http.post('/api/user/create', self.user)
+                .then(function(response) {
+                    var userId = response.data;
+                    self.moveToWait(userId);
+                }, function(error) {
+                    self.loading = false;
+                    alert("Error creating user: " + error.data.message);
+                });
+        };
+    });
+
+</script>
+</body>
+</html>

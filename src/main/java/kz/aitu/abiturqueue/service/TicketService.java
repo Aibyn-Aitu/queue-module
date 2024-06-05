@@ -12,9 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -183,5 +181,11 @@ public class TicketService {
                 .average()
                 .orElse(0.0);
         return average;
+    }
+
+    public Optional<Ticket> getTicketById(Long id){
+        Optional<Ticket> ticket = ticketRepository.findById(id);
+        return ticket;
+
     }
 }

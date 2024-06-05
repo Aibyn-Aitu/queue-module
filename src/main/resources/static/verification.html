@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+    <title>Verification Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+
+    <style>
+        .big-font {
+            font-size: 2em;
+        }
+        .row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .btn {
+            width: 90%;
+            height: 60%;
+            font-size: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .input {
+            font-size: 2em;
+            width: 90%;
+            height: 60px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body ng-app="registerApp" ng-controller="VerificationController as verificationCtrl">
+<div class="container">
+    <h1 class="text-center">Verification Page</h1>
+    <div class="row">
+        <div class="col-6">
+            <input type="text" class="form-control input" ng-model="verificationCtrl.code" placeholder="Введите код"/>
+        </div>
+        <div class="col-6">
+            <button ng-disabled="verificationCtrl.loading" ng-click="verificationCtrl.verifyCode()" type="button" class="btn btn-primary btn-lg">VERIFY</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var app = angular.module('registerApp', ['ngRoute']);
+
+    app.controller('VerificationController', function($http, $window) {
+        var self = this;
+        self.code = '';
+        self.loading = false;
+
+        self.verifyCode = function() {
+            if (!self.code) {
+                alert("Code cannot be empty");
+                return;
+            }
+            self.loading = true;
+            $http.post('/api/user/verification', { userId: $window.localStorage.getItem('userId'), code: self.code })
+                .then(function(response) {
+                    var ticketNumber = response.data;
+                    if (ticketNumber) {
+                        $window.location.href = '/find-ticket.html';
+                    } else {
+                        alert("Invalid code");
+                        self.loading = false;
+                    }
+                }, function(error) {
+                    self.loading = false;
+                    alert("Error verifying code: " + error.data.message);
+                });
+        };
+    });
+</script>
+</body>
+</html>

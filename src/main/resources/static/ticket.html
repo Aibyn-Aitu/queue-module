@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+    <title>Ticket Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+
+    <style>
+        .big-font {
+            font-size: 2em;
+        }
+        .row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .btn {
+            width: 90%;
+            height: 60%;
+            font-size: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .input {
+            font-size: 2em;
+            width: 90%;
+            height: 60px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body ng-app="registerApp" ng-controller="TicketController as ticketCtrl">
+<div class="container">
+    <h1 class="text-center">Your Ticket</h1>
+    <div class="row">
+        <div class="col-12 text-center">
+            <h2 class="big-font">Ticket Number: {{ ticketCtrl.ticketNumber }}</h2>
+        </div>
+    </div>
+</div>
+
+<script>
+    var app = angular.module('registerApp', ['ngRoute']);
+
+    app.controller('TicketController', function($window) {
+        var self = this;
+        self.ticketNumber = $window.localStorage.getItem('ticketNumber');
+    });
+</script>
+</body>
+</html>
