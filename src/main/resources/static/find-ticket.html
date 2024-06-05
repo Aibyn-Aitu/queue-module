@@ -12,39 +12,31 @@
         .big-font {
             font-size: 2em;
         }
-        .row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        .container {
+            max-width: 400px;
+            margin-top: 20px;
         }
-        .btn {
-            width: 90%;
-            height: 60%;
-            font-size: 48px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .form-control {
+            font-size: 1.5em;
+            height: calc(1.5em + 1rem + 2px);
         }
-        .input {
-            font-size: 2em;
-            width: 90%;
-            height: 60px;
-            margin-bottom: 20px;
+        .btn-lg {
+            font-size: 1.5em;
+            padding: 0.75rem 1.25rem;
         }
     </style>
 </head>
 <body ng-app="ticketApp" ng-controller="FindTicketController as findTicketCtrl">
 <div class="container">
     <h1 class="text-center">Find Ticket</h1>
-    <div class="row">
-        <div class="col-6">
-            <input type="text" class="form-control input" ng-model="findTicketCtrl.iin" placeholder="Введите ИИН"/>
+    <br/>
+    <br/>
+    <form>
+        <div class="form-group">
+            <input type="text" class="form-control" ng-model="findTicketCtrl.iin" placeholder="Введите ИИН" required/>
         </div>
-        <div class="col-6">
-            <button ng-disabled="findTicketCtrl.loading" ng-click="findTicketCtrl.findTicket()" type="button" class="btn btn-primary btn-lg">FIND</button>
-        </div>
-    </div>
+        <button ng-disabled="findTicketCtrl.loading" ng-click="findTicketCtrl.findTicket()" type="button" class="btn btn-primary btn-lg btn-block">FIND</button>
+    </form>
 </div>
 
 <script>
@@ -68,6 +60,7 @@
                         $window.localStorage.setItem('userId', user.id);
                         $window.localStorage.setItem('userFirstname', user.firstname);
                         $window.localStorage.setItem('userLastname', user.lastname);
+                        $window.localStorage.setItem('ticketNumber', user.ticketNumber); // добавляем ticketNumber в localStorage
                         $window.location.href = '/ticket-information.html';
                     } else {
                         alert("User not found");

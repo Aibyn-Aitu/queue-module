@@ -12,24 +12,10 @@
         .big-font {
             font-size: 2em;
         }
-        .row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        .container {
+            margin-top: 20px;
         }
-        .btn {
-            width: 90%;
-            height: 60%;
-            font-size: 48px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .input {
-            font-size: 2em;
-            width: 90%;
-            height: 60px;
+        .info-block {
             margin-bottom: 20px;
         }
     </style>
@@ -37,13 +23,17 @@
 <body ng-app="ticketApp" ng-controller="TicketInfoController as ticketInfoCtrl">
 <div class="container">
     <h1 class="text-center">Ticket Information</h1>
-    <div class="row">
-        <div class="col-12 text-center">
-            <h2 class="big-font">Имя: {{ ticketInfoCtrl.firstname }}</h2>
-            <h2 class="big-font">Фамилия: {{ ticketInfoCtrl.lastname }}</h2>
-            <h2 class="big-font" ng-if="ticketInfoCtrl.ticketNumber !== null">Номер билета: {{ ticketInfoCtrl.ticketNumber }}</h2>
-            <h2 class="big-font" ng-if="ticketInfoCtrl.ticketNumber === null">Билет не найден</h2>
-        </div>
+    <br/>
+    <br/>
+    <div class="info-block text-center">
+        <h2 class="big-font">Имя: {{ ticketInfoCtrl.firstname }}</h2>
+    </div>
+    <div class="info-block text-center">
+        <h2 class="big-font">Фамилия: {{ ticketInfoCtrl.lastname }}</h2>
+    </div>
+    <div class="info-block text-center">
+        <h2 class="big-font" ng-if="ticketInfoCtrl.ticketNumber !== null">Номер билета: {{ ticketInfoCtrl.ticketNumber }}</h2>
+        <h2 class="big-font" ng-if="ticketInfoCtrl.ticketNumber === null">Билет не найден</h2>
     </div>
 </div>
 

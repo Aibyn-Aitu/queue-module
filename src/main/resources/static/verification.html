@@ -12,39 +12,31 @@
         .big-font {
             font-size: 2em;
         }
-        .row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        .container {
+            max-width: 400px;
+            margin-top: 20px;
         }
-        .btn {
-            width: 90%;
-            height: 60%;
-            font-size: 48px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .form-control {
+            font-size: 1.5em;
+            height: calc(1.5em + 1rem + 2px);
         }
-        .input {
-            font-size: 2em;
-            width: 90%;
-            height: 60px;
-            margin-bottom: 20px;
+        .btn-lg {
+            font-size: 1.5em;
+            padding: 0.75rem 1.25rem;
         }
     </style>
 </head>
 <body ng-app="registerApp" ng-controller="VerificationController as verificationCtrl">
 <div class="container">
     <h1 class="text-center">Verification Page</h1>
-    <div class="row">
-        <div class="col-6">
-            <input type="text" class="form-control input" ng-model="verificationCtrl.code" placeholder="Введите код"/>
+    <br/>
+    <br/>
+    <form>
+        <div class="form-group">
+            <input type="text" class="form-control" ng-model="verificationCtrl.code" placeholder="Введите код" required/>
         </div>
-        <div class="col-6">
-            <button ng-disabled="verificationCtrl.loading" ng-click="verificationCtrl.verifyCode()" type="button" class="btn btn-primary btn-lg">VERIFY</button>
-        </div>
-    </div>
+        <button ng-disabled="verificationCtrl.loading" ng-click="verificationCtrl.verifyCode()" type="button" class="btn btn-primary btn-lg btn-block">VERIFY</button>
+    </form>
 </div>
 
 <script>
