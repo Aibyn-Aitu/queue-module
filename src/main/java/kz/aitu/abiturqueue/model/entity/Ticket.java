@@ -13,22 +13,35 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Ticket {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
+    @Column(name = "number")
     private Integer number;
-    // Status:
-    // CREATED Билет создан
-    // 'WAIT' Билет получил абитуриент
-    // 'served' Билет в ожидании
-    // 'in progress' билет у менеджера
+
+    @Column(name = "status")
     private String status;
+
+    @Column(name = "createdTimestamp")
     private Long createdTimestamp;
+
+    @Column(name = "startWaitingTimestamp")
     private Long startWaitingTimestamp;
+
+    @Column(name = "startServedTimestamp")
     private Long startServedTimestamp;
+
+    @Column(name = "startInPgrogressTimestamp")
     private Long startInProgressTimestamp;
+
+    @Column(name = "startCancelTimestamp")
     private Long startCancelTimestamp;
+
+    @Column(name = "type")
     private String type;
+
+    @Column(name = "tableNumber")
+    private Integer tableNumber;
 }

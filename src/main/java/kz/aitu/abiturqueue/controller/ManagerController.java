@@ -19,10 +19,10 @@ public class ManagerController {
 
     // ... ваш код ...
 
-    @PostMapping("/invite/{type}")
-    public ResponseEntity<Ticket> inviteNextTicket(@PathVariable String type) {
+    @PostMapping("/invite/{type}/{table}")
+    public ResponseEntity<Ticket> inviteNextTicket(@PathVariable String type, @PathVariable Integer table) {
 
-        return ResponseEntity.ok(ticketService.inviteNextTicket(type));
+        return ResponseEntity.ok(ticketService.inviteNextTicket(type, table));
     }
 
     @PutMapping("/{id}/toProgress")

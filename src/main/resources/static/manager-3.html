@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Manager Page 1</title>
+    <title>Manager Page 3</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
 </head>
@@ -87,7 +87,7 @@
             }, 60000);
 
             self.inviteNextTicket = function() {
-                $http.post('/api/manager/invite/' + self.type + '/' + 1)
+                $http.post('/api/manager/invite/' + self.type + '/' + 3)
                     .then(function(response) {
                         console.log("Invited next ticket");
                         // Reload served tickets

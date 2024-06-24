@@ -99,7 +99,7 @@ public class TicketService {
         }*/
     }
 
-    public Ticket inviteNextTicket(String type) {
+    public Ticket inviteNextTicket(String type, Integer table) {
         log.info("Getting first waiting ticket");
         var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("WAIT", type)
                 .orElseGet(() -> ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("WAIT", "BASIC")
@@ -108,6 +108,7 @@ public class TicketService {
 
         log.info("Retrieved ticket: {}", nextTicket);
         nextTicket.setStatus("SERVED");
+        nextTicket.setTableNumber(table);
         nextTicket.setStartServedTimestamp(System.currentTimeMillis());
         nextTicket.setType(type);
         return ticketRepository.save(nextTicket);
