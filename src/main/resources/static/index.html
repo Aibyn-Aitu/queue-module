@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <!-- Add AngularJS -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <!-- Add qrcodejs library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         .text {
             color: whitesmoke;
@@ -29,6 +31,10 @@
             flex-grow: 1;
             text-align: center;
         }
+        .qr-code {
+            max-width: 200px;
+            margin: 20px auto;
+        }
     </style>
 </head>
 <body ng-app="queueApp" ng-controller="QueueController as queue" class="bg-dark">
@@ -45,7 +51,7 @@
     <h1 class="text-center text">Сейчас подошла ваша очередь</h1>
     <div class="flex-container">
         <div class="flex-item" ng-repeat="ticket in queue.servedTickets | orderBy: 'type'">
-            <div class="card text-center " ng-class="{'bg-warning': ticket.type === 'BASIC', 'bg-primary': ticket.type === 'BENEFIT'}">
+            <div class="card text-center" ng-class="{'bg-warning': ticket.type === 'BASIC', 'bg-primary': ticket.type === 'BENEFIT'}">
                 <div class="card-body">
                     <h1 class="big-font text">{{ticket.number}}</h1>
                     <h4 class="text">{{ticket.tableNumber}} стол</h4>
@@ -54,11 +60,19 @@
         </div>
     </div>
 </div>
+<div>
+    <br>
+</div>
+
+<div class="container text-center">
+    <h2 class="text">Чтобы зарегистрироваться в очереди, отсканируйте QR-код</h2>
+    <div id="qrcode" class="qr-code"></div>
+</div>
 
 <!--<div class="container">-->
 <!--    <h1 class="text-center">Будьте готовы</h1>-->
 <!--    <div class="flex-container">-->
-<!--        <div class="flex-item " ng-repeat="ticket in queue.waitingTickets">-->
+<!--        <div class="flex-item" ng-repeat="ticket in queue.waitingTickets">-->
 <!--            <div class="card text-center bg-secondary">-->
 <!--                <div class="card-body">-->
 <!--                    <h1 class="mid-font">{{ticket.number}}</h1>-->
@@ -105,6 +119,13 @@
             self.currentTime = new Date();
         }, 1000);
     }]);
+
+    // Generate QR code using qrcode.js
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        text: "https://queue-aitu.up.railway.app/user.html", // Replace with your registration link
+        width: 200,
+        height: 200
+    });
 </script>
 </body>
 </html>

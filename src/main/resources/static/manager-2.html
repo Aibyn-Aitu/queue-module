@@ -21,7 +21,7 @@
             </div>
         </div>
     </div>
-    <h1 class="text-center">Manager Page {{manager.type}}</h1>
+    <h1 class="text-center">Manager 2</h1>
 
     <button class="btn btn-large btn-primary" ng-click="manager.inviteNextTicket()">Invite Next Ticket</button>
 
@@ -63,7 +63,7 @@
             self.type = 'BASIC';
 
             // Fetch served tickets
-            $http.get('/api/display/tickets/served/' + self.type)
+            $http.get('/api/display/tickets/served/table/' + 2)
                 .then(function(response) {
                     self.servedTickets = response.data;
                 });
@@ -91,7 +91,7 @@
                     .then(function(response) {
                         console.log("Invited next ticket");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/served/' + self.type)
+                        $http.get('/api/display/tickets/served/table/' + 2)
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });
@@ -103,7 +103,7 @@
                     .then(function(response) {
                         console.log("Moved ticket to progress");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/served')
+                        $http.get('/api/display/tickets/served/table/' + 2)
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });
@@ -115,7 +115,7 @@
                     .then(function(response) {
                         console.log("Cancelled ticket");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/served')
+                        $http.get('/api/display/tickets/served/table/' + 2)
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });

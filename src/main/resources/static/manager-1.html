@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Manager Page 3</title>
+    <title>Manager Page 1</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
 </head>
@@ -21,7 +21,7 @@
             </div>
         </div>
     </div>
-    <h1 class="text-center">Manager 3</h1>
+    <h1 class="text-center">Manager 1</h1>
 
     <button class="btn btn-large btn-primary" ng-click="manager.inviteNextTicket()">Invite Next Ticket</button>
 
@@ -63,7 +63,7 @@
             self.type = 'BASIC';
 
             // Fetch served tickets
-            $http.get('/api/display/tickets/served/table/' + 3)
+            $http.get('/api/display/tickets/served/table/' + 1)
                 .then(function(response) {
                     self.servedTickets = response.data;
                 });
@@ -87,11 +87,11 @@
             }, 60000);
 
             self.inviteNextTicket = function() {
-                $http.post('/api/manager/invite/' + self.type + '/' + 3)
+                $http.post('/api/manager/invite/' + self.type + '/' + 1)
                     .then(function(response) {
                         console.log("Invited next ticket");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/served/table/' + 3)
+                        $http.get('/api/display/tickets/served/table/' + 1)
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });
@@ -103,7 +103,7 @@
                     .then(function(response) {
                         console.log("Moved ticket to progress");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/served/table/' + 3)
+                        $http.get('/api/display/tickets/served/table/' + 1)
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });
@@ -115,7 +115,7 @@
                     .then(function(response) {
                         console.log("Cancelled ticket");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/served/table/' + 3)
+                        $http.get('/api/display/tickets/served/table/' + 1)
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });
