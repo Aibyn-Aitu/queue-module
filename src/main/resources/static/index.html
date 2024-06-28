@@ -32,7 +32,7 @@
         }
 
         .card {
-            margin: 10px;
+            margin: 7px;
         }
 
         .flex-container {
@@ -86,20 +86,20 @@
 
             <div class="row flex-grow-1">
                 <div class="col text-center">
-                    <h3 class="text">Чтобы зарегистрироваться в очереди, отсканируйте QR-код</h3>
+                    <h5 class="text">Чтобы зарегистрироваться в очереди, отсканируйте QR-код</h5>
                     <div class="qr-code-container">
                         <div id="qrcode" class="qr-code"></div>
                     </div>
                 </div>
             </div>
-            <h1 class="text">Сейчас подошла ваша очередь</h1>
+            <h3 class="text">Сейчас подошла ваша очередь</h3>
             <div class="flex-container">
                 <div class="flex-item" ng-repeat="ticket in queue.servedTickets | orderBy: 'type'">
                     <div class="card text-center"
                          ng-class="{'bg-warning': ticket.type === 'BASIC', 'bg-primary': ticket.type === 'BENEFIT'}">
                         <div class="card-body">
-                            <h1 class="big-font text">{{ticket.number}}</h1>
-                            <h4 class="text">{{ticket.tableNumber}} стол</h4>
+                            <h4 class="big-font text">{{ticket.number}}</h4>
+                            <h5 class="text">{{ticket.tableNumber}} стол</h5>
                         </div>
                     </div>
                 </div>
