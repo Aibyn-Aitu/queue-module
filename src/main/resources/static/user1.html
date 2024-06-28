@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+    <title>Register Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+
+    <style>
+        .big-font {
+            font-size: 2em;
+        }
+        .row {
+            margin-top: 20px;
+        }
+        .form-control {
+            font-size: 1.5em;
+            height: calc(1.5em + 1rem + 2px);
+        }
+        .btn-lg {
+            font-size: 1.5em;
+            padding: 0.75rem 1.25rem;
+        }
+        .container {
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body ng-app="registerApp" ng-controller="RegisterController as registerCtrl">
+<div class="container">
+    <h1 class="text-center">Система на стадии тестирования</h1>
+</div>
+
+<script>
+    var app = angular.module('registerApp', ['ngRoute']);
+
+    app.controller('RegisterController', function($http, $window) {
+        var self = this;
+        self.user = { iin: '', firstname: '', lastname: '', email: '' };
+        self.loading = false;
+
+        self.moveToWait = function(userId) {
+            $window.localStorage.setItem('userId', userId);
+            $window.location.href = '/verification.html';
+        };
+
+        self.createUser = function() {
+            if (!self.user.iin) {
+                alert("IIN cannot be empty");
+                return;
+            }
+            self.loading = true;
+            $http.post('/api/user/create', self.user)
+                .then(function(response) {
+                    var userId = response.data;
+                    self.moveToWait(userId);
+                }, function(error) {
+                    self.loading = false;
+                    alert("Error creating user: " + error.data.message);
+                });
+        };
+    });
+</script>
+</body>
+</html>
