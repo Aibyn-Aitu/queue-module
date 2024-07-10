@@ -26,12 +26,20 @@
         .container {
             max-width: 600px;
         }
+        .alert {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body ng-app="registerApp" ng-controller="RegisterController as registerCtrl">
 <div class="container">
-    <h1 class="text-center">Register Page</h1>
+    <h1 class="text-center">Регистрация в очередь</h1>
+
     <br/>
+    <div class="alert alert-info" role="alert">
+        При заполнении обязательно проверьте свои данные. На указанную почту будет отправлен код для подтверждения.
+    </div>
     <br/>
     <form>
         <div class="form-group">

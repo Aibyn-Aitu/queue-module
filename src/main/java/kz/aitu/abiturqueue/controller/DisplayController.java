@@ -51,6 +51,11 @@ public class DisplayController {
         return ticketRepository.findByStatusAndTableNumberOrderByStartWaitingTimestampAsc("SERVED", tableNum);
     }
 
+    @GetMapping("/tickets/coworking")
+    public List<Ticket> getCoworkingTickets() {
+        return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("COWORKING");
+    }
+
     @GetMapping("/tickets/served")
     public List<Ticket> getServedTickets() {
         return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("SERVED");

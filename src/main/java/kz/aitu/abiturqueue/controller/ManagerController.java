@@ -22,7 +22,13 @@ public class ManagerController {
     @PostMapping("/invite/{type}/{table}")
     public ResponseEntity<Ticket> inviteNextTicket(@PathVariable String type, @PathVariable Integer table) {
 
-        return ResponseEntity.ok(ticketService.inviteNextTicket(type, table));
+        return ResponseEntity.ok(ticketService.inviteNextTicketToTable(type, table));
+    }
+
+    @PostMapping("/invite/{type}")
+    public ResponseEntity<Ticket> inviteNextTicketToCoworking(@PathVariable String type) {
+
+        return ResponseEntity.ok(ticketService.inviteNextTicketToCoworking(type));
     }
 
     @PutMapping("/{id}/toProgress")

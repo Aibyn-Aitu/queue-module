@@ -99,7 +99,22 @@ public class TicketService {
         }*/
     }
 
-    public Ticket inviteNextTicket(String type, Integer table) {
+    public Ticket inviteNextTicketToTable(String type, Integer table) {
+        log.info("Getting first waiting ticket");
+        var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("COWORKING", type)
+                .orElseGet(() -> ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("COWORKING", "BASIC")
+                        .orElseThrow(() -> new ResourceNotFoundException("No waiting tickets found")));
+
+
+        log.info("Retrieved ticket: {}", nextTicket);
+        nextTicket.setStatus("SERVED");
+        nextTicket.setTableNumber(table);
+        nextTicket.setStartServedTimestamp(System.currentTimeMillis());
+        nextTicket.setType(type);
+        return ticketRepository.save(nextTicket);
+    }
+
+    public Ticket inviteNextTicketToCoworking(String type) {
         log.info("Getting first waiting ticket");
         var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("WAIT", type)
                 .orElseGet(() -> ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("WAIT", "BASIC")
@@ -107,8 +122,7 @@ public class TicketService {
 
 
         log.info("Retrieved ticket: {}", nextTicket);
-        nextTicket.setStatus("SERVED");
-        nextTicket.setTableNumber(table);
+        nextTicket.setStatus("COWORKING");
         nextTicket.setStartServedTimestamp(System.currentTimeMillis());
         nextTicket.setType(type);
         return ticketRepository.save(nextTicket);

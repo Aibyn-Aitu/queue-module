@@ -28,14 +28,16 @@
 </head>
 <body ng-app="registerApp" ng-controller="VerificationController as verificationCtrl">
 <div class="container">
-    <h1 class="text-center">Verification Page</h1>
+    <h1 class="text-center">Подтверждение почты</h1>
     <br/>
-    <br/>
+    <div class="alert alert-info" role="alert">
+        На указанную почту отправлен код. Введите код чтобы продолжить.
+    </div>
     <form>
         <div class="form-group">
             <input type="text" class="form-control" ng-model="verificationCtrl.code" placeholder="Введите код" required/>
         </div>
-        <button ng-disabled="verificationCtrl.loading" ng-click="verificationCtrl.verifyCode()" type="button" class="btn btn-primary btn-lg btn-block">VERIFY</button>
+        <button ng-disabled="verificationCtrl.loading" ng-click="verificationCtrl.verifyCode()" type="button" class="btn btn-primary btn-lg btn-block">Подтвердить</button>
     </form>
 </div>
 

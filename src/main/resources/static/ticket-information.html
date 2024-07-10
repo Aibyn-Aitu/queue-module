@@ -29,7 +29,7 @@
 </head>
 <body ng-app="ticketApp" ng-controller="TicketInfoController as ticketInfoCtrl">
 <div class="container">
-    <h1 class="text-center">Ticket Information</h1>
+    <h1 class="text-center">Очередь AITU</h1>
     <br/>
     <br/>
     <div class="info-block text-center">
@@ -43,6 +43,7 @@
             <div class="card-body">
                 <h2 class="big-font card-title" ng-if="ticketInfoCtrl.ticketNumber !== null">{{ ticketInfoCtrl.ticketNumber }} талон</h2>
                 <h2 class="big-font card-title" ng-if="ticketInfoCtrl.ticketNumber === null">Билет не найден</h2>
+                <h4 ng-if="ticketInfoCtrl.tableNumber !== null">{{ticketInfoCtrl.tableNumber}} стол</h4>
             </div>
         </div>
     </div>
@@ -56,6 +57,7 @@
         self.firstname = $window.localStorage.getItem('userFirstname');
         self.lastname = $window.localStorage.getItem('userLastname');
         self.ticketNumber = null;
+        self.tableNumber = null;
 
         var userId = $window.localStorage.getItem('userId');
         console.log('User ID:', userId); // Логирование
@@ -74,6 +76,7 @@
                             .then(function(response) {
                                 console.log('Ticket:', response.data); // Логирование
                                 self.ticketNumber = response.data.number;
+                                self.tableNumber = response.data.tableNumber;
                             })
                             .catch(function(error) {
                                 console.error('Error getting ticket:', error); // Логирование ошибок

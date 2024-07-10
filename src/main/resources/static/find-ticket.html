@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <base href="/">
-    <title>Find Ticket</title>
+    <title>Найти билет</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
@@ -28,14 +28,16 @@
 </head>
 <body ng-app="ticketApp" ng-controller="FindTicketController as findTicketCtrl">
 <div class="container">
-    <h1 class="text-center">Find Ticket</h1>
+    <h1 class="text-center">Найти талон</h1>
     <br/>
-    <br/>
+    <div class="alert alert-info" role="alert">
+        Последний шаг. Введите ИИН чтобы найти свой талон
+    </div>
     <form>
         <div class="form-group">
             <input type="text" class="form-control" ng-model="findTicketCtrl.iin" placeholder="Введите ИИН" required/>
         </div>
-        <button ng-disabled="findTicketCtrl.loading" ng-click="findTicketCtrl.findTicket()" type="button" class="btn btn-primary btn-lg btn-block">FIND</button>
+        <button ng-disabled="findTicketCtrl.loading" ng-click="findTicketCtrl.findTicket()" type="button" class="btn btn-primary btn-lg btn-block">Найти</button>
     </form>
 </div>
 
