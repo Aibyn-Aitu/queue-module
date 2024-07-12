@@ -73,8 +73,10 @@
 
         self.createUser = function() {
             if (!self.user.iin) {
-                alert("IIN cannot be empty");
+                alert("ИИН не должен быть пустым");
                 return;
+            } else if(!self.user.email){
+                alert("Введите почту")
             }
             self.loading = true;
             $http.post('/api/user/create', self.user)

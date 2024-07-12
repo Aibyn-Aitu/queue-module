@@ -1,5 +1,6 @@
 package kz.aitu.abiturqueue.controller;
 
+import kz.aitu.abiturqueue.exception.InvalidVerificationCodeException;
 import kz.aitu.abiturqueue.model.dto.UserDtoRequest;
 import kz.aitu.abiturqueue.model.dto.VerificationDtoRequest;
 import kz.aitu.abiturqueue.model.entity.User;
@@ -29,7 +30,11 @@ public class UserController {
 
     @PostMapping("/verification")
     public ResponseEntity<Integer> verification(@RequestBody VerificationDtoRequest verificationDtoRequest){
-        return ResponseEntity.ok(userService.verification(verificationDtoRequest.getUserId(), verificationDtoRequest.getCode()));
+        try {
+            return ResponseEntity.ok(userService.verification(verificationDtoRequest.getUserId(), verificationDtoRequest.getCode()));
+        } catch (InvalidVerificationCodeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     @GetMapping("/find/iin")

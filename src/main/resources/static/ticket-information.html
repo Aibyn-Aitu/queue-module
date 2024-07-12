@@ -12,12 +12,15 @@
         .big-font {
             font-size: 2em;
         }
+
         .container {
             margin-top: 20px;
         }
+
         .info-block {
             margin-bottom: 20px;
         }
+
         .card-custom {
             background-color: #ffc107;
             border-radius: 20px;
@@ -31,6 +34,11 @@
 <div class="container">
     <h1 class="text-center">Очередь AITU</h1>
     <br/>
+    <div class="container col-5">
+        <div class="alert alert-info" role="alert">
+            Не закрывайте страницу в браузере. Иначе потеряете талон. Для безопасности сделайте скриншот.
+        </div>
+    </div>
     <br/>
     <div class="info-block text-center">
         <h2 class="big-font">Имя: {{ ticketInfoCtrl.firstname }}</h2>
@@ -41,7 +49,8 @@
     <div class="info-block text-center">
         <div class="card card-custom">
             <div class="card-body">
-                <h2 class="big-font card-title" ng-if="ticketInfoCtrl.ticketNumber !== null">{{ ticketInfoCtrl.ticketNumber }} талон</h2>
+                <h2 class="big-font card-title" ng-if="ticketInfoCtrl.ticketNumber !== null">{{
+                    ticketInfoCtrl.ticketNumber }} талон</h2>
                 <h2 class="big-font card-title" ng-if="ticketInfoCtrl.ticketNumber === null">Билет не найден</h2>
                 <h4 ng-if="ticketInfoCtrl.tableNumber !== null">{{ticketInfoCtrl.tableNumber}} стол</h4>
             </div>
@@ -52,11 +61,11 @@
 <script>
     var app = angular.module('ticketApp', ['ngRoute']);
 
-    app.controller('TicketInfoController', function($http, $window) {
+    app.controller('TicketInfoController', function ($http, $window) {
         var self = this;
         self.firstname = $window.localStorage.getItem('userFirstname');
         self.lastname = $window.localStorage.getItem('userLastname');
-        self.ticketNumber = null;
+        self.ticketNumber = $window.localStorage.getItem('ticketNumber'); // Получаем ticketNumber из localStorage
         self.tableNumber = null;
 
         var userId = $window.localStorage.getItem('userId');
@@ -64,21 +73,21 @@
 
         if (userId) {
             // Получаем пользователя по userId
-            $http.get('/api/user/find/id', { params: { id: userId } })
-                .then(function(response) {
+            $http.get('/api/user/find/id', {params: {id: userId}})
+                .then(function (response) {
                     var user = response.data;
                     console.log('User:', user); // Логирование
                     var ticketId = user.ticketId;
 
                     if (ticketId) {
                         // Получаем номер билета по ticketId
-                        $http.get('/api/tickets/find-by-id', { params: { id: ticketId } })
-                            .then(function(response) {
+                        $http.get('/api/tickets/find-by-id', {params: {id: ticketId}})
+                            .then(function (response) {
                                 console.log('Ticket:', response.data); // Логирование
                                 self.ticketNumber = response.data.number;
                                 self.tableNumber = response.data.tableNumber;
                             })
-                            .catch(function(error) {
+                            .catch(function (error) {
                                 console.error('Error getting ticket:', error); // Логирование ошибок
                                 self.ticketNumber = null;
                             });
@@ -86,7 +95,7 @@
                         console.error('No ticket ID found for user');
                     }
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.error('Error getting user:', error); // Логирование ошибок
                 });
         } else {

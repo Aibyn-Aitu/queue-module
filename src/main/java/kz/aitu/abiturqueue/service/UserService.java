@@ -1,5 +1,6 @@
 package kz.aitu.abiturqueue.service;
 
+import kz.aitu.abiturqueue.exception.InvalidVerificationCodeException;
 import kz.aitu.abiturqueue.model.dto.UserDtoRequest;
 import kz.aitu.abiturqueue.model.entity.Ticket;
 import kz.aitu.abiturqueue.model.entity.User;
@@ -60,30 +61,17 @@ public class UserService {
             if(user.getCode().equals(code)){
                 user.setIsVerified(true);
                 Ticket ticket = ticketRepository.findFirstByStatusAndTypeOrderByNumberAsc("CREATED", "BASIC").orElse(null);
-                ticket.setStatus("WAIT");
-                ticket.setStartWaitingTimestamp(System.currentTimeMillis());
                 if (ticket != null) {
+                    ticket.setStatus("WAIT");
+                    ticket.setStartWaitingTimestamp(System.currentTimeMillis());
                     user.setTicketId(ticket.getId());
                     userRepository.save(user);
                     return ticket.getNumber();
                 }
+            } else {
+                throw new InvalidVerificationCodeException("Invalid verification code");
             }
         }
-        return null;
+        throw new InvalidVerificationCodeException("User not found");
     }
-
-//    public Long create(UserDtoRequest userDtoRequest){
-//        User user = new User();
-//        Ticket ticket = ticketRepository.findFirstByStatusAndTypeOrderByNumberAsc("CREATED", "BASIC").orElse(null);
-//
-//        if(getByIin(userDtoRequest.getIin()).isEmpty()){
-//            user.setIin(userDtoRequest.getIin());
-//            user.setTicketId(ticket.getId());
-//        }else {
-//            return 0L;
-//        }
-//
-//        this.userRepository.save(user);
-//        return user.getTicketId();
-//    }
 }

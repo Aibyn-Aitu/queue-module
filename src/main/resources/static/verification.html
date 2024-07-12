@@ -33,6 +33,9 @@
     <div class="alert alert-info" role="alert">
         На указанную почту отправлен код. Введите код чтобы продолжить.
     </div>
+    <div ng-if="verificationCtrl.errorMessage" class="alert alert-danger" role="alert">
+        {{ verificationCtrl.errorMessage }}
+    </div>
     <form>
         <div class="form-group">
             <input type="text" class="form-control" ng-model="verificationCtrl.code" placeholder="Введите код" required/>
@@ -48,25 +51,28 @@
         var self = this;
         self.code = '';
         self.loading = false;
+        self.errorMessage = '';
 
         self.verifyCode = function() {
             if (!self.code) {
-                alert("Code cannot be empty");
+                alert("Поле не может быть пустым");
                 return;
             }
             self.loading = true;
+            self.errorMessage = '';
             $http.post('/api/user/verification', { userId: $window.localStorage.getItem('userId'), code: self.code })
                 .then(function(response) {
                     var ticketNumber = response.data;
                     if (ticketNumber) {
-                        $window.location.href = '/find-ticket.html';
+                        $window.localStorage.setItem('ticketNumber', ticketNumber); // Сохраняем ticketNumber в localStorage
+                        $window.location.href = '/ticket-information.html'; // Перенаправляем на страницу информации о билете
                     } else {
-                        alert("Invalid code");
+                        self.errorMessage = "Неправильный код";
                         self.loading = false;
                     }
                 }, function(error) {
                     self.loading = false;
-                    alert("Error verifying code: " + error.data.message);
+                    self.errorMessage = "Неправильный код";
                 });
         };
     });
