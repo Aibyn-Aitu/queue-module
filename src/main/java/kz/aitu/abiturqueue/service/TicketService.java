@@ -165,7 +165,7 @@ public class TicketService {
         var ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id " + id));
 
-        if(!ticket.getStatus().equals("SERVED")) {
+        if(!ticket.getStatus().equals("COWORKING")) {
             throw new IllegalStateException("Ticket with id " + id + " is not in CREATED status");
         }
 

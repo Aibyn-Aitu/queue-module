@@ -45,6 +45,9 @@
                 {{(manager.currentTime - ticket.startServedTimestamp) / 60000 | number:0}}m</btn></td>
             <td>{{ticket.type}}</td>
             <td>{{ticket.status}}</td>
+            <td>
+                <button class="btn btn-danger" ng-click="manager.toCancelTicket(ticket.id)">CANCEL</button>
+            </td>
         </tr>
         </tbody>
     </table>
@@ -99,7 +102,7 @@
                     .then(function(response) {
                         console.log("Moved ticket to progress");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/served/table/' + 1)
+                        $http.get('/api/display/tickets/coworking')
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });
@@ -111,7 +114,7 @@
                     .then(function(response) {
                         console.log("Cancelled ticket");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/served/table/' + 1)
+                        $http.get('/api/display/tickets/coworking')
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });
