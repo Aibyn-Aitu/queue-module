@@ -16,6 +16,7 @@ public class TicketStatisticDTO {
     private Long waitCount;
     private Long servedCount;
     private Long progressCount;
+    private Long coworkingCount;
 
     private List<String> dates;
     private List<Integer> ticketsInProcess;

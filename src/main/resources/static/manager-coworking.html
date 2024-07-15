@@ -16,7 +16,12 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-white bg-warning mb-3">
+            <div class="card text-white bg-secondary mb-3" ng-class="{'bg-warning': manager.stats.coworkingCount > 0}">
+                <div class="card-header">В зале консультации {{manager.stats.coworkingCount}}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
                 <div class="card-header">Завершено {{manager.stats.progressCount}}</div>
             </div>
         </div>
@@ -25,14 +30,12 @@
 
     <button class="btn btn-large btn-primary" ng-click="manager.inviteNextTicket()">Invite Next Ticket</button>
 
-    <h2 class="mt-4">Served Tickets</h2>
+    <h2 class="mt-4">Талоны</h2>
     <table class="table">
         <thead>
         <tr>
-            <th scope="col">#</th>
-            <th scope="col">Start Served Timestamp</th>
-            <th scope="col">Elapsed Time</th>
-            <th scope="col">Type</th>
+            <th scope="col">Номер талона</th>
+            <th scope="col">Время регистрации</th>
             <th scope="col">Status</th>
             <th scope="col">Actions</th>
         </tr>
@@ -40,13 +43,10 @@
         <tbody>
         <tr ng-repeat="ticket in manager.servedTickets | orderBy:'startServedTimestamp'">
             <th scope="row">{{ticket.number}}</th>
-            <td>{{ticket.startServedTimestamp | date:'HH:mm'}}</td>
-            <td><btn class="btn w-50 text-dark" ng-class="{'btn-outline-warning': (manager.currentTime - ticket.startServedTimestamp) > 600000,'btn-outline-danger': (manager.currentTime - ticket.startServedTimestamp) > 1200000}">
-                {{(manager.currentTime - ticket.startServedTimestamp) / 60000 | number:0}}m</btn></td>
-            <td>{{ticket.type}}</td>
+            <td>{{ticket.startWaitingTimestamp | date:'HH:mm'}}</td>
             <td>{{ticket.status}}</td>
             <td>
-                <button class="btn btn-danger" ng-click="manager.toCancelTicket(ticket.id)">CANCEL</button>
+                <button class="btn btn-danger" ng-click="manager.toCancelTicket(ticket.id)">Удалить</button>
             </td>
         </tr>
         </tbody>

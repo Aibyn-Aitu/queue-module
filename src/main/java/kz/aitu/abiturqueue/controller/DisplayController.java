@@ -95,6 +95,7 @@ public class DisplayController {
                 .servedCount(ticketRepository.countAllByStatus("SERVED"))
                 .waitCount(ticketRepository.countAllByStatus("WAIT"))
                 .createdCount(ticketRepository.countAllByStatus("CREATED"))
+                .coworkingCount(ticketRepository.countAllByStatus("COWORKING"))
                 .build();
 
         return stats;
