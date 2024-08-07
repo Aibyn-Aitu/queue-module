@@ -56,6 +56,11 @@ public class DisplayController {
         return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("COWORKING");
     }
 
+    @GetMapping("/tickets/check")
+    public List<Ticket> getCheckTickets() {
+        return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("CHECK");
+    }
+
     @GetMapping("/tickets/served")
     public List<Ticket> getServedTickets() {
         return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("SERVED");
@@ -96,6 +101,8 @@ public class DisplayController {
                 .waitCount(ticketRepository.countAllByStatus("WAIT"))
                 .createdCount(ticketRepository.countAllByStatus("CREATED"))
                 .coworkingCount(ticketRepository.countAllByStatus("COWORKING"))
+                .checkCount(ticketRepository.countAllByStatus("CHECK"))
+                .addedCount(ticketRepository.countAllByStatus("ADDED"))
                 .build();
 
         return stats;

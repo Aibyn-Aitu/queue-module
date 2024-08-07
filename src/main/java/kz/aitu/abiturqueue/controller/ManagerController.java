@@ -31,6 +31,12 @@ public class ManagerController {
         return ResponseEntity.ok(ticketService.inviteNextTicketToCoworking(type));
     }
 
+    @PostMapping("/invite/check/{type}")
+    public ResponseEntity<Ticket> inviteNextTicketToCheck(@PathVariable String type) {
+
+        return ResponseEntity.ok(ticketService.inviteNextTicketToCheck(type));
+    }
+
     @PutMapping("/{id}/toProgress")
     public ResponseEntity<Ticket> toProgressTicket(@PathVariable Long id) {
         return ResponseEntity.ok(ticketService.toProgressTicket(id));
@@ -39,6 +45,11 @@ public class ManagerController {
     @PutMapping("/{id}/toWait")
     public ResponseEntity<Ticket> toWaitTicket(@PathVariable Long id) {
         return ResponseEntity.ok(ticketService.toWaitTicket(id));
+    }
+
+    @PutMapping("/{id}/toAdded")
+    public ResponseEntity<Ticket> toWaitAdded(@PathVariable Long id) {
+        return ResponseEntity.ok(ticketService.toAddedTicket(id));
     }
 
     @PutMapping("/{id}/toCancel")

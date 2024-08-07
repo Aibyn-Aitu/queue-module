@@ -69,6 +69,11 @@ public class TicketController {
         return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("COWORKING");
     }
 
+    @GetMapping("/check")
+    public List<Ticket> getCheckTickets() {
+        return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("CHECK");
+    }
+
     @GetMapping("/served/{type}")
     public List<Ticket> getServedTickets(@PathVariable String type) {
         return ticketRepository.findByStatusAndTypeOrderByStartWaitingTimestampAsc("SERVED", type);

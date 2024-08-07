@@ -62,7 +62,7 @@ public class UserService {
                 user.setIsVerified(true);
                 Ticket ticket = ticketRepository.findFirstByStatusAndTypeOrderByNumberAsc("CREATED", "BASIC").orElse(null);
                 if (ticket != null) {
-                    ticket.setStatus("WAIT");
+                    ticket.setStatus("ADDED");
                     ticket.setStartWaitingTimestamp(System.currentTimeMillis());
                     user.setTicketId(ticket.getId());
                     userRepository.save(user);

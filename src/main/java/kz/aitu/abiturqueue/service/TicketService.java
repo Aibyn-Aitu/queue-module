@@ -128,6 +128,19 @@ public class TicketService {
         return ticketRepository.save(nextTicket);
     }
 
+    public Ticket inviteNextTicketToCheck(String type) {
+        log.info("Getting first waiting ticket");
+        var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("ADDED", type)
+                .orElseGet(() -> ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("ADDED", "BASIC")
+                        .orElseThrow(() -> new ResourceNotFoundException("No waiting tickets found")));
+
+
+        log.info("Retrieved ticket: {}", nextTicket);
+        nextTicket.setStatus("CHECK");
+        nextTicket.setType(type);
+        return ticketRepository.save(nextTicket);
+    }
+
     public Ticket toProgressTicket(Long id) {
         log.info("Moving ticket with id {} to progress", id);
         var ticket = ticketRepository.findById(id)
@@ -149,8 +162,8 @@ public class TicketService {
         var ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id " + id));
 
-        if(!ticket.getStatus().equals("CREATED")) {
-            throw new IllegalStateException("Ticket with id " + id + " is not in CREATED status");
+        if(!ticket.getStatus().equals("CHECK")) {
+            throw new IllegalStateException("Ticket with id " + id + " is not in CHECK status");
         }
 
         ticket.setStatus("WAIT");
@@ -158,6 +171,23 @@ public class TicketService {
 
         var updatedTicket = ticketRepository.save(ticket);
         log.info("Moved ticket to wait: {}", updatedTicket);
+        return updatedTicket;
+    }
+
+    public Ticket toAddedTicket(Long id) {
+        log.info("Moving ticket with id {} to added", id);
+        var ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id " + id));
+
+        if(!ticket.getStatus().equals("CREATED")) {
+            throw new IllegalStateException("Ticket with id " + id + " is not in CREATED status");
+        }
+
+        ticket.setStatus("ADDED");
+        ticket.setStartWaitingTimestamp(System.currentTimeMillis());
+
+        var updatedTicket = ticketRepository.save(ticket);
+        log.info("Moved ticket to added: {}", updatedTicket);
         return updatedTicket;
     }
     public Ticket toCancelTicket(Long id) {

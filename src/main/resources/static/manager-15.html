@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Manager Page 1</title>
+    <title>Manager Page 15</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
 </head>
@@ -11,13 +11,13 @@
 
     <div class="row">
         <div class="col-md-4">
-            <div class="card text-white bg-secondary mb-3" ng-class="{'bg-danger': manager.stats.waitCount + manager.stats.checkCount + manager.stats.addedCount > 0}">
-                <div class="card-header">В ожидании {{manager.stats.waitCount + manager.stats.checkCount + manager.stats.addedCount}}</div>
+            <div class="card text-white bg-secondary mb-3" ng-class="{'bg-danger': manager.stats.waitCount > 0}">
+                <div class="card-header">В ожидании {{manager.stats.waitCount}}</div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card text-white bg-secondary mb-3" ng-class="{'bg-warning': manager.stats.coworkingCount > 0}">
-                <div class="card-header">В  coworking {{manager.stats.coworkingCount}}</div>
+                <div class="card-header">В зале консультации {{manager.stats.coworkingCount}}</div>
             </div>
         </div>
         <div class="col-md-4">
@@ -26,7 +26,7 @@
             </div>
         </div>
     </div>
-    <h1 class="text-center">Manager 1</h1>
+    <h1 class="text-center">Manager 15</h1>
 
     <button class="btn btn-large btn-primary" ng-click="manager.inviteNextTicket()">Invite Next Ticket</button>
 
@@ -62,7 +62,7 @@
             self.type = 'BASIC';
 
             // Fetch served tickets
-            $http.get('/api/display/tickets/served/table/' + 1)
+            $http.get('/api/display/tickets/served/table/' + 15)
                 .then(function(response) {
                     self.servedTickets = response.data;
                 });
@@ -86,11 +86,11 @@
             }, 60000);
 
             self.inviteNextTicket = function() {
-                $http.post('/api/manager/invite/' + self.type + '/' + 1)
+                $http.post('/api/manager/invite/' + self.type + '/' + 15)
                     .then(function(response) {
                         console.log("Invited next ticket");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/served/table/' + 1)
+                        $http.get('/api/display/tickets/served/table/' + 15)
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });
@@ -102,7 +102,7 @@
                     .then(function(response) {
                         console.log("Moved ticket to progress");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/served/table/' + 1)
+                        $http.get('/api/display/tickets/served/table/' + 15)
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });
@@ -114,7 +114,7 @@
                     .then(function(response) {
                         console.log("Cancelled ticket");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/served/table/' + 1)
+                        $http.get('/api/display/tickets/served/table/' + 15)
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });

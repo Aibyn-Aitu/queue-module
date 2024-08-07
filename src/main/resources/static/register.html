@@ -90,10 +90,10 @@
 
             self.toWaitTicket = function(id) {
                 self.loadingTickets = true;
-                $http.put('/api/manager/' + id + '/toWait', {headers: {'code': self.code}})
+                $http.put('/api/manager/' + id + '/toAdded', {headers: {'code': self.code}})
                     .then(function(response) {
                         self.loadingTickets = false;
-                        console.log("Moved ticket to wait");
+                        console.log("Moved ticket to added");
                         // Reload created tickets
                         self.getCreatedTickets();
                     });

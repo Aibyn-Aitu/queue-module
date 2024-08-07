@@ -127,6 +127,7 @@
 
         self.servedTickets = [];
         self.coworkingTickets = [];
+        self.checkTickets = [];
         self.waitingTickets = [];
         self.stats = {};
 
@@ -139,6 +140,11 @@
             $http.get('/api/display/tickets/coworking')
                 .then(function (response) {
                     self.coworkingTickets = response.data;
+                });
+
+            $http.get('/api/display/tickets/check')
+                .then(function (response) {
+                    self.checkTickets = response.data;
                 });
 
             /*$http.get('/api/display/tickets/wait/10')
