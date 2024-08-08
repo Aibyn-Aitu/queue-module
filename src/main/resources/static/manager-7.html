@@ -11,8 +11,8 @@
 
     <div class="row">
         <div class="col-md-4">
-            <div class="card text-white bg-secondary mb-3" ng-class="{'bg-danger': manager.stats.waitCount > 0}">
-                <div class="card-header">В ожидании {{manager.stats.waitCount}}</div>
+            <div class="card text-white bg-secondary mb-3" ng-class="{'bg-danger': manager.stats.waitCount + manager.stats.checkCount + manager.stats.addedCount > 0}">
+                <div class="card-header">В ожидании {{manager.stats.waitCount + manager.stats.checkCount + manager.stats.addedCount}}</div>
             </div>
         </div>
         <div class="col-md-4">

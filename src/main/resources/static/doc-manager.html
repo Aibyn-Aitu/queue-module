@@ -48,6 +48,7 @@
             <td>{{ticket.status}}</td>
             <td>
                 <button class="btn btn-success" ng-click="manager.toProgressTicket(ticket.id)">Завершить</button>
+                <button class="btn btn-danger" ng-click="manager.toCancelTicket(ticket.id)">Удалить</button>
             </td>
         </tr>
         </tbody>
@@ -111,11 +112,11 @@
             };
 
             self.toCancelTicket = function(id) {
-                $http.put('/api/manager/' + id + '/toCancel')
+                $http.put('/api/manager/' + id + '/toDeleteCheck')
                     .then(function(response) {
                         console.log("Cancelled ticket");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/coworking')
+                        $http.get('/api/display/tickets/check')
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });
