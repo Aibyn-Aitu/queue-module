@@ -55,7 +55,7 @@ public class TicketService {
                     .build();
             ticketList.add(ticket);
         }
-        for (int i = 500; i < 700; i++) {
+        for (int i = 700; i < 900; i++) {
             var ticket = Ticket.builder()
                     .createdTimestamp(now.getTime() + i)
                     .status("CREATED")
@@ -101,8 +101,8 @@ public class TicketService {
 
     public Ticket inviteNextTicketToTable(String type, Integer table) {
         log.info("Getting first waiting ticket");
-        var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("COWORKING", type)
-                .orElseGet(() -> ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("COWORKING", "BASIC")
+        var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("READY", type)
+                .orElseGet(() -> ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("READY", "BASIC")
                         .orElseThrow(() -> new ResourceNotFoundException("No waiting tickets found")));
 
 
@@ -157,6 +157,24 @@ public class TicketService {
         log.info("Moved ticket to progress: {}", updatedTicket);
         return updatedTicket;
     }
+
+    public Ticket toReadyTicket(Long id) {
+        log.info("Moving ticket with id {} to progress", id);
+        var ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id " + id));
+
+        if(!ticket.getStatus().equals("COWORKING")) {
+            throw new IllegalStateException("Ticket with id " + id + " is not in COWORKING status");
+        }
+
+        ticket.setStatus("READY");
+        ticket.setStartInProgressTimestamp(System.currentTimeMillis());
+
+        var updatedTicket = ticketRepository.save(ticket);
+        log.info("Moved ticket to progress: {}", updatedTicket);
+        return updatedTicket;
+    }
+
     public Ticket toWaitTicket(Long id) {
         log.info("Moving ticket with id {} to wait", id);
         var ticket = ticketRepository.findById(id)

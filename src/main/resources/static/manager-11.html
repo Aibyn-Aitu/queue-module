@@ -10,17 +10,22 @@
 <div class="container">
 
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card text-white bg-secondary mb-3" ng-class="{'bg-danger': manager.stats.waitCount + manager.stats.checkCount + manager.stats.addedCount > 0}">
                 <div class="card-header">В ожидании {{manager.stats.waitCount + manager.stats.checkCount + manager.stats.addedCount}}</div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card text-white bg-secondary mb-3" ng-class="{'bg-warning': manager.stats.coworkingCount > 0}">
-                <div class="card-header">В зале консультации {{manager.stats.coworkingCount}}</div>
+                <div class="card-header">Пишут договор {{manager.stats.coworkingCount}}</div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3" ng-class="{'bg-info': manager.stats.coworkingCount > 0}">
+                <div class="card-header">Готово {{manager.stats.readyCount}}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
             <div class="card text-white bg-success mb-3">
                 <div class="card-header">Завершено {{manager.stats.progressCount}}</div>
             </div>

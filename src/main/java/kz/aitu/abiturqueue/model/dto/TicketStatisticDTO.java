@@ -19,6 +19,7 @@ public class TicketStatisticDTO {
     private Long coworkingCount;
     private Long addedCount;
     private Long checkCount;
+    private Long readyCount;
 
     private List<String> dates;
     private List<Integer> ticketsInProcess;

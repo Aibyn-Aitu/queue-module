@@ -103,6 +103,7 @@ public class DisplayController {
                 .coworkingCount(ticketRepository.countAllByStatus("COWORKING"))
                 .checkCount(ticketRepository.countAllByStatus("CHECK"))
                 .addedCount(ticketRepository.countAllByStatus("ADDED"))
+                .readyCount(ticketRepository.countAllByStatus("READY"))
                 .build();
 
         return stats;

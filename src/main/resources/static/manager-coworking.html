@@ -10,17 +10,22 @@
 <div class="container">
 
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card text-white bg-secondary mb-3" ng-class="{'bg-danger': manager.stats.waitCount > 0}">
                 <div class="card-header">В ожидании {{manager.stats.waitCount}}</div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card text-white bg-secondary mb-3" ng-class="{'bg-warning': manager.stats.coworkingCount > 0}">
-                <div class="card-header">В зале консультации {{manager.stats.coworkingCount}}</div>
+                <div class="card-header">Пишут договор {{manager.stats.coworkingCount}}</div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3" ng-class="{'bg-info': manager.stats.coworkingCount > 0}">
+                <div class="card-header">Готово {{manager.stats.readyCount}}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
             <div class="card text-white bg-success mb-3">
                 <div class="card-header">Завершено {{manager.stats.progressCount}}</div>
             </div>
@@ -46,6 +51,7 @@
             <td>{{ticket.startWaitingTimestamp | date:'HH:mm'}}</td>
             <td>{{ticket.status}}</td>
             <td>
+                <button class="btn btn-info" ng-click="manager.toProgressTicket(ticket.id)">Завершить</button>
                 <button class="btn btn-danger" ng-click="manager.toCancelTicket(ticket.id)">Удалить</button>
             </td>
         </tr>
@@ -98,7 +104,7 @@
             };
 
             self.toProgressTicket = function(id) {
-                $http.put('/api/manager/' + id + '/toProgress')
+                $http.put('/api/manager/' + id + '/toReady')
                     .then(function(response) {
                         console.log("Moved ticket to progress");
                         // Reload served tickets
