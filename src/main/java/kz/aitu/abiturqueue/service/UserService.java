@@ -74,4 +74,26 @@ public class UserService {
         }
         throw new InvalidVerificationCodeException("User not found");
     }
+
+    public Integer onlineVerification(Long userId, Integer code){
+        Optional<User> userOptional = this.getById(userId);
+
+        if(userOptional.isPresent()){
+            User user = userOptional.get();
+            if(user.getCode().equals(code)){
+                user.setIsVerified(true);
+                Ticket ticket = ticketRepository.findFirstByStatusAndTypeOrderByNumberAsc("CREATED", "BENEFIT").orElse(null);
+                if (ticket != null) {
+                    ticket.setStatus("ADDED");
+                    ticket.setStartWaitingTimestamp(System.currentTimeMillis());
+                    user.setTicketId(ticket.getId());
+                    userRepository.save(user);
+                    return ticket.getNumber();
+                }
+            } else {
+                throw new InvalidVerificationCodeException("Invalid verification code");
+            }
+        }
+        throw new InvalidVerificationCodeException("User not found");
+    }
 }

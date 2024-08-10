@@ -37,6 +37,15 @@ public class UserController {
         }
     }
 
+    @PostMapping("/online-verification")
+    public ResponseEntity<Integer> onlineVerification(@RequestBody VerificationDtoRequest verificationDtoRequest){
+        try {
+            return ResponseEntity.ok(userService.onlineVerification(verificationDtoRequest.getUserId(), verificationDtoRequest.getCode()));
+        } catch (InvalidVerificationCodeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
     @GetMapping("/find/iin")
     public ResponseEntity<User> findUserByIin(@RequestParam String iin){
         Optional<User> user = userService.getUserByIin(iin);

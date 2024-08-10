@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+    <title>Ticket Information</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+
+    <style>
+        .big-font {
+            font-size: 1.5em;
+        }
+
+        @media (min-width: 768px) {
+            .big-font {
+                font-size: 2em;
+            }
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .info-block {
+            margin-bottom: 20px;
+        }
+
+        .card-custom {
+            background-color: #ffc107;
+            border-radius: 20px;
+            color: #fff;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 80px;
+        }
+
+        .alert-custom {
+            background-color: #17a2b8;
+            color: #fff;
+        }
+
+        .alert-custom a {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        .table-custom {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .btn-confirm {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body ng-app="ticketApp" ng-controller="TicketInfoController as ticketInfoCtrl">
+<div class="container">
+    <h1 class="text-center">Очередь AITU</h1>
+    <br/>
+    <div class="container col-md-9 col-12">
+        <div class="alert alert-info alert-custom text-center" role="alert">
+            Не закрывайте страницу в браузере. Иначе потеряете талон. Для безопасности сделайте скриншот.
+            <br/>
+        </div>
+    </div>
+    <br/>
+    <div class="info-block text-center">
+        <h2 class="big-font">Время регистрации: {{ ticketInfoCtrl.createdTime }}</h2>
+        <h2 class="big-font">{{ ticketInfoCtrl.firstname }} {{ ticketInfoCtrl.lastname }}</h2>
+    </div>
+    <div class="info-block text-center">
+        <div class="card card-custom">
+            <div class="card-body">
+                <h1 class="big-font card-title" ng-if="ticketInfoCtrl.ticketNumber !== null">{{ ticketInfoCtrl.ticketNumber }} талон</h1>
+                <h1 class="big-font card-title" ng-if="ticketInfoCtrl.ticketNumber === null">Билет не найден</h1>
+                <h2 ng-if="ticketInfoCtrl.tableNumber !== null">{{ticketInfoCtrl.tableNumber}} стол</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Slot Selection Table -->
+    <div class="table-custom" ng-if="ticketInfoCtrl.showTimeSlotSelection">
+        <h3 class="text-center">Выберите слот времени</h3>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">Время</th>
+                <th scope="col">Выбор</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="slot in ticketInfoCtrl.timeSlots">
+                <td>{{ slot.time }}</td>
+                <td><input type="radio" name="timeSlot" ng-model="ticketInfoCtrl.selectedSlotId" ng-value="slot.id"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- Confirmation Button -->
+        <button ng-if="ticketInfoCtrl.selectedSlotId" class="btn btn-primary btn-block btn-confirm" ng-click="ticketInfoCtrl.saveTimeSlot(ticketInfoCtrl.selectedSlotId)">Подтвердить выбор</button>
+    </div>
+</div>
+
+<script>
+    var app = angular.module('ticketApp', ['ngRoute']);
+
+    app.controller('TicketInfoController', function ($http, $window) {
+        var self = this;
+        self.firstname = $window.localStorage.getItem('userFirstname');
+        self.lastname = $window.localStorage.getItem('userLastname');
+        self.ticketNumber = $window.localStorage.getItem('ticketNumber');
+        self.tableNumber = null;
+        self.createdTime = null;
+        self.timeSlots = [];
+        self.selectedSlotId = null;
+        self.showTimeSlotSelection = true; // Переменная для управления видимостью блока
+
+        var userId = $window.localStorage.getItem('userId');
+        console.log('User ID:', userId);
+
+        if (userId) {
+            $http.get('/api/user/find/id', {params: {id: userId}})
+                .then(function (response) {
+                    var user = response.data;
+                    console.log('User:', user);
+                    var ticketId = user.ticketId;
+                    $window.localStorage.setItem('ticketId', response.data.ticketId);
+
+                    if (ticketId) {
+                        $http.get('/api/tickets/find-by-id', {params: {id: ticketId}})
+                            .then(function (response) {
+                                console.log('Ticket:', response.data);
+                                self.ticketNumber = response.data.number;
+                                self.tableNumber = response.data.tableNumber;
+                                var date = new Date(response.data.startWaitingTimestamp);
+                                self.createdTime = date.toLocaleString();
+                            })
+                            .catch(function (error) {
+                                console.error('Error getting ticket:', error);
+                                self.ticketNumber = null;
+                            });
+                    } else {
+                        console.error('No ticket ID found for user');
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Error getting user:', error);
+                });
+        } else {
+            console.error('No user ID found in localStorage');
+        }
+
+        // Получение всех доступных слотов времени
+        self.loadTimeSlots = function() {
+            $http.get('/api/time-slot/get-all-null-ticket')
+                .then(function(response) {
+                    self.timeSlots = response.data;
+                })
+                .catch(function(error) {
+                    console.error('Error getting time slots:', error);
+                });
+        };
+
+        // Сохранение выбранного слота времени
+        self.saveTimeSlot = function(timeSlotId) {
+            var ticketId = $window.localStorage.getItem('ticketId');
+            if (ticketId) {
+                $http.post('/api/time-slot/assign-ticket', null, { params: { ticketId: ticketId, timeSlotId: timeSlotId } })
+                    .then(function(response) {
+                        console.log('Time slot assigned:', response.data);
+                        alert('Слот времени успешно сохранен!');
+                        self.showTimeSlotSelection = false; // Скрыть блок после успешного сохранения
+                    })
+                    .catch(function(error) {
+                        console.error('Error assigning time slot:', error);
+                    });
+            } else {
+                console.error('No ticket ID found in localStorage');
+            }
+        };
+
+        // Инициализация загрузки слотов времени
+        self.loadTimeSlots();
+    });
+
+</script>
+</body>
+</html>
