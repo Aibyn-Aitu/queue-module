@@ -37,6 +37,12 @@ public class ManagerController {
         return ResponseEntity.ok(ticketService.inviteNextTicketToCheck(type));
     }
 
+    @PostMapping("/invite/benefit/check/{type}")
+    public ResponseEntity<Ticket> inviteNextTicketToTable(@PathVariable String type) {
+
+        return ResponseEntity.ok(ticketService.inviteNextTicketToCheck(type));
+    }
+
     @PutMapping("/{id}/toProgress")
     public ResponseEntity<Ticket> toProgressTicket(@PathVariable Long id) {
         return ResponseEntity.ok(ticketService.toProgressTicket(id));

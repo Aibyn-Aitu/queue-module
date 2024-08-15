@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <base href="/">
@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
     <style>
         .big-font {
@@ -25,6 +26,7 @@
 
         .info-block {
             margin-bottom: 20px;
+            animation: fadeInUp 1s;
         }
 
         .card-custom {
@@ -34,11 +36,14 @@
             max-width: 600px;
             margin: 0 auto;
             padding: 80px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            animation: bounceIn 1s;
         }
 
         .alert-custom {
             background-color: #17a2b8;
             color: #fff;
+            animation: fadeInDown 1s;
         }
 
         .alert-custom a {
@@ -52,10 +57,85 @@
             background-color: #f8f9fa;
             border-radius: 10px;
             padding: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1.5s;
         }
 
         .btn-confirm {
             margin-top: 20px;
+            background-color: #007bff;
+            border-color: #007bff;
+            animation: fadeInUp 1s;
+        }
+
+        .btn-confirm:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translate3d(0, 100%, 0);
+            }
+            to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translate3d(0, -100%, 0);
+            }
+            to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounceIn {
+            from, 20%, 40%, 60%, 80%, to {
+                animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+            }
+
+            0% {
+                opacity: 0;
+                transform: scale3d(.3, .3, .3);
+            }
+
+            20% {
+                transform: scale3d(1.1, 1.1, 1.1);
+            }
+
+            40% {
+                transform: scale3d(.9, .9, .9);
+            }
+
+            60% {
+                opacity: 1;
+                transform: scale3d(1.03, 1.03, 1.03);
+            }
+
+            80% {
+                transform: scale3d(.97, .97, .97);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale3d(1, 1, 1);
+            }
         }
     </style>
 </head>
@@ -80,9 +160,13 @@
                 <h1 class="big-font card-title" ng-if="ticketInfoCtrl.ticketNumber !== null">{{ ticketInfoCtrl.ticketNumber }} талон</h1>
                 <h1 class="big-font card-title" ng-if="ticketInfoCtrl.ticketNumber === null">Билет не найден</h1>
                 <h2 ng-if="ticketInfoCtrl.tableNumber !== null">{{ticketInfoCtrl.tableNumber}} стол</h2>
+                <!-- Вывод времени выбранного слота -->
+                <h2 ng-if="ticketInfoCtrl.selectedSlotTime !== null">{{ticketInfoCtrl.selectedSlotTime}}</h2>
             </div>
         </div>
     </div>
+
+
 
     <!-- Time Slot Selection Table -->
     <div class="table-custom" ng-if="ticketInfoCtrl.showTimeSlotSelection">
@@ -103,7 +187,7 @@
         </table>
 
         <!-- Confirmation Button -->
-        <button ng-if="ticketInfoCtrl.selectedSlotId" class="btn btn-primary btn-block btn-confirm" ng-click="ticketInfoCtrl.saveTimeSlot(ticketInfoCtrl.selectedSlotId)">Подтвердить выбор</button>
+        <button class="btn btn-primary btn-block btn-confirm" ng-click="ticketInfoCtrl.saveTimeSlot(ticketInfoCtrl.selectedSlotId)">Подтвердить выбор</button>
     </div>
 </div>
 
@@ -119,7 +203,8 @@
         self.createdTime = null;
         self.timeSlots = [];
         self.selectedSlotId = null;
-        self.showTimeSlotSelection = true; // Переменная для управления видимостью блока
+        self.selectedSlotTime = $window.localStorage.getItem('selectedSlotTime'); // Загрузка времени слота из localStorage
+        self.showTimeSlotSelection = false;
 
         var userId = $window.localStorage.getItem('userId');
         console.log('User ID:', userId);
@@ -130,7 +215,7 @@
                     var user = response.data;
                     console.log('User:', user);
                     var ticketId = user.ticketId;
-                    $window.localStorage.setItem('ticketId', response.data.ticketId);
+                    $window.localStorage.setItem('ticketId', ticketId);
 
                     if (ticketId) {
                         $http.get('/api/tickets/find-by-id', {params: {id: ticketId}})
@@ -140,6 +225,28 @@
                                 self.tableNumber = response.data.tableNumber;
                                 var date = new Date(response.data.startWaitingTimestamp);
                                 self.createdTime = date.toLocaleString();
+
+                                // Проверка, выбран ли слот времени
+                                $http.get('/api/time-slot/is-user-select/' + userId)
+                                    .then(function (response) {
+                                        if (!response.data) {
+                                            self.showTimeSlotSelection = true; // Показываем блок, если слот не выбран
+                                            self.loadTimeSlots();
+                                        } else if (!self.selectedSlotTime) {
+                                            // Загрузка времени выбранного слота с сервера
+                                            $http.get('/api/time-slot/' + response.data)
+                                                .then(function (response) {
+                                                    self.selectedSlotTime = response.data.time;
+                                                    $window.localStorage.setItem('selectedSlotTime', self.selectedSlotTime); // Сохранение в localStorage
+                                                })
+                                                .catch(function (error) {
+                                                    console.error('Error loading selected time slot:', error);
+                                                });
+                                        }
+                                    })
+                                    .catch(function (error) {
+                                        console.error('Error checking time slot selection:', error);
+                                    });
                             })
                             .catch(function (error) {
                                 console.error('Error getting ticket:', error);
@@ -156,7 +263,6 @@
             console.error('No user ID found in localStorage');
         }
 
-        // Получение всех доступных слотов времени
         self.loadTimeSlots = function() {
             $http.get('/api/time-slot/get-all-null-ticket')
                 .then(function(response) {
@@ -167,7 +273,6 @@
                 });
         };
 
-        // Сохранение выбранного слота времени
         self.saveTimeSlot = function(timeSlotId) {
             var ticketId = $window.localStorage.getItem('ticketId');
             if (ticketId) {
@@ -176,6 +281,8 @@
                         console.log('Time slot assigned:', response.data);
                         alert('Слот времени успешно сохранен!');
                         self.showTimeSlotSelection = false; // Скрыть блок после успешного сохранения
+                        self.selectedSlotTime = response.data.time;
+                        $window.localStorage.setItem('selectedSlotTime', self.selectedSlotTime); // Сохранение времени в localStorage
                     })
                     .catch(function(error) {
                         console.error('Error assigning time slot:', error);
@@ -184,10 +291,9 @@
                 console.error('No ticket ID found in localStorage');
             }
         };
-
-        // Инициализация загрузки слотов времени
-        self.loadTimeSlots();
     });
+
+
 
 </script>
 </body>

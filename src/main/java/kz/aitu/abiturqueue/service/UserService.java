@@ -1,5 +1,7 @@
 package kz.aitu.abiturqueue.service;
 
+import kz.aitu.abiturqueue.exception.CustomNotFoundException;
+import kz.aitu.abiturqueue.exception.ExceptionDescription;
 import kz.aitu.abiturqueue.exception.InvalidVerificationCodeException;
 import kz.aitu.abiturqueue.model.dto.UserDtoRequest;
 import kz.aitu.abiturqueue.model.entity.Ticket;
@@ -21,6 +23,11 @@ public class UserService {
 
     public Optional<User> getById(Long id){
         return this.userRepository.findById(id);
+    }
+
+    public User getByIdThrowException(Long id) {
+        return this.getById(id).orElseThrow(() -> new CustomNotFoundException(String.format
+                (ExceptionDescription.CustomNotFoundException, "User", "id", id)));
     }
 
     public Optional<User> getByIin(String iin){
@@ -84,7 +91,7 @@ public class UserService {
                 user.setIsVerified(true);
                 Ticket ticket = ticketRepository.findFirstByStatusAndTypeOrderByNumberAsc("CREATED", "BENEFIT").orElse(null);
                 if (ticket != null) {
-                    ticket.setStatus("ADDED");
+                    ticket.setStatus("ONLINE");
                     ticket.setStartWaitingTimestamp(System.currentTimeMillis());
                     user.setTicketId(ticket.getId());
                     userRepository.save(user);

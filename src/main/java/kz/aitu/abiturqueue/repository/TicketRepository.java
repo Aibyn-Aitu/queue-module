@@ -16,6 +16,8 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findByStatusAndIdIsAfterOrderByIdAsc(String status, Long minId, Pageable pageable);
     List<Ticket> findByStatusOrderByStartWaitingTimestampAsc(String status);
     List<Ticket> findByStatusAndTableNumberOrderByStartWaitingTimestampAsc(String status, Integer tableNum);
+
+    List<Ticket> findByStatusAndTableNumberAndTypeOrderByStartWaitingTimestampAsc(String status, Integer tableNum, String type);
     List<Ticket> findByStatusAndStartInProgressTimestampAfter(String status, Long timestamp);
     List<Ticket> findByStatusAndTypeOrderByStartWaitingTimestampAsc(String status, String type);
 

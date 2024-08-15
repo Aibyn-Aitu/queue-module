@@ -8,6 +8,7 @@ import kz.aitu.abiturqueue.service.TimeSlotService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,12 @@ public class TimeSlotController {
         return timeSlotService.getAll();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<TimeSlot> getById(@PathVariable(value = "id") Long id){
+        TimeSlot timeSlot = this.timeSlotService.getByIdThrowException(id);
+        return ResponseEntity.ok().body(timeSlot);
+    }
+
     @GetMapping("/get-all-null-ticket")
     public List<TimeSlot> getAllNullTickets() {
         return timeSlotRepository.findByTicketIdIsNull();
@@ -41,5 +48,10 @@ public class TimeSlotController {
 
         timeSlot.setTicketId(ticket.getId());
         return timeSlotRepository.save(timeSlot);
+    }
+
+    @GetMapping("/is-user-select/{userId}")
+    public boolean isUserSelect(@PathVariable Long userId){
+        return timeSlotService.isUserSelectTheTimeSlot(userId);
     }
 }
