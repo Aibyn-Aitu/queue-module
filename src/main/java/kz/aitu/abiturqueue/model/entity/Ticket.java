@@ -27,8 +27,20 @@ public class Ticket {
     @Column(name = "createdTimestamp")
     private Long createdTimestamp;
 
+    @Column(name = "startAddTimestamp")
+    private Long startAddedTimestamp;
+
+    @Column(name = "startCheckTimestamp")
+    private Long startCheckTimestamp;
+
     @Column(name = "startWaitingTimestamp")
     private Long startWaitingTimestamp;
+
+    @Column(name = "startCoworkingTimestamp")
+    private Long startCoworkingTimestamp;
+
+    @Column(name = "startReadyTimestamp")
+    private Long startReadyTimestamp;
 
     @Column(name = "startServedTimestamp")
     private Long startServedTimestamp;

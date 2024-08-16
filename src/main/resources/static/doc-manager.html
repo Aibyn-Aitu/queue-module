@@ -44,7 +44,7 @@
         <tbody>
         <tr ng-repeat="ticket in manager.servedTickets | orderBy:'startServedTimestamp'">
             <th scope="row">{{ticket.number}}</th>
-            <td>{{ticket.startWaitingTimestamp | date:'HH:mm'}}</td>
+            <td>{{ticket.startAddedTimestamp | date:'HH:mm'}}</td>
             <td>{{ticket.status}}</td>
             <td>
                 <button class="btn btn-success" ng-click="manager.toProgressTicket(ticket.id)">Завершить</button>

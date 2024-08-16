@@ -58,12 +58,17 @@ public class DisplayController {
 
     @GetMapping("/tickets/coworking")
     public List<Ticket> getCoworkingTickets() {
-        return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("COWORKING");
+        return ticketRepository.findByStatusOrderByStartCoworkingTimestampAsc("COWORKING");
+    }
+
+    @GetMapping("/tickets/ready")
+    public List<Ticket> getReadyTickets() {
+        return ticketRepository.findByStatusOrderByStartReadyTimestampAsc("READY");
     }
 
     @GetMapping("/tickets/check")
     public List<Ticket> getCheckTickets() {
-        return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("CHECK");
+        return ticketRepository.findByStatusOrderByStartCheckTimestampAsc("CHECK");
     }
 
     @GetMapping("/tickets/served")

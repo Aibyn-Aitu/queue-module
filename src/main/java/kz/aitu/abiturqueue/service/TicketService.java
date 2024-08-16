@@ -101,8 +101,8 @@ public class TicketService {
 
     public Ticket inviteNextTicketToTable(String type, Integer table) {
         log.info("Getting first waiting ticket");
-        var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("READY", type)
-                .orElseGet(() -> ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("READY", "BASIC")
+        var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartReadyTimestampAsc("READY", type)
+                .orElseGet(() -> ticketRepository.findFirstByStatusAndTypeOrderByStartReadyTimestampAsc("READY", "BASIC")
                         .orElseThrow(() -> new ResourceNotFoundException("No waiting tickets found")));
 
 
@@ -123,20 +123,21 @@ public class TicketService {
 
         log.info("Retrieved ticket: {}", nextTicket);
         nextTicket.setStatus("COWORKING");
-        nextTicket.setStartServedTimestamp(System.currentTimeMillis());
+        nextTicket.setStartCoworkingTimestamp(System.currentTimeMillis());
         nextTicket.setType(type);
         return ticketRepository.save(nextTicket);
     }
 
     public Ticket inviteNextTicketToCheck(String type) {
         log.info("Getting first waiting ticket");
-        var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("ADDED", type)
+        var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartAddedTimestampAsc("ADDED", type)
                 .orElseGet(() -> ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("ADDED", "BASIC")
                         .orElseThrow(() -> new ResourceNotFoundException("No waiting tickets found")));
 
 
         log.info("Retrieved ticket: {}", nextTicket);
         nextTicket.setStatus("CHECK");
+        nextTicket.setStartCheckTimestamp(System.currentTimeMillis());
         nextTicket.setType(type);
         return ticketRepository.save(nextTicket);
     }
@@ -168,7 +169,7 @@ public class TicketService {
         }
 
         ticket.setStatus("READY");
-        ticket.setStartInProgressTimestamp(System.currentTimeMillis());
+        ticket.setStartReadyTimestamp(System.currentTimeMillis());
 
         var updatedTicket = ticketRepository.save(ticket);
         log.info("Moved ticket to progress: {}", updatedTicket);
@@ -202,7 +203,7 @@ public class TicketService {
         }
 
         ticket.setStatus("ADDED");
-        ticket.setStartWaitingTimestamp(System.currentTimeMillis());
+        ticket.setStartAddedTimestamp(System.currentTimeMillis());
 
         var updatedTicket = ticketRepository.save(ticket);
         log.info("Moved ticket to added: {}", updatedTicket);
