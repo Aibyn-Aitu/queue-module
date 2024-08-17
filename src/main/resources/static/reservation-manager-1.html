@@ -91,7 +91,7 @@
             }, 60000);
 
             self.inviteNextTicket = function() {
-                $http.post('/api/manager/invite/' + self.type + '/' + 21)
+                $http.post('/api/manager/invite/benefit/' + self.type + '/' + 21)
                     .then(function(response) {
                         console.log("Invited next ticket");
                         // Reload served tickets

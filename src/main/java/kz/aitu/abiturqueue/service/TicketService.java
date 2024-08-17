@@ -114,6 +114,21 @@ public class TicketService {
         return ticketRepository.save(nextTicket);
     }
 
+    public Ticket inviteNextBenefitTicketToTable(String type, Integer table) {
+        log.info("Getting first waiting ticket");
+        var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartReadyTimestampAsc("ADDED", type)
+                .orElseGet(() -> ticketRepository.findFirstByStatusAndTypeOrderByStartReadyTimestampAsc("ADDED", "BENEFIT")
+                        .orElseThrow(() -> new ResourceNotFoundException("No waiting tickets found")));
+
+
+        log.info("Retrieved ticket: {}", nextTicket);
+        nextTicket.setStatus("SERVED");
+        nextTicket.setTableNumber(table);
+        nextTicket.setStartServedTimestamp(System.currentTimeMillis());
+        nextTicket.setType(type);
+        return ticketRepository.save(nextTicket);
+    }
+
     public Ticket inviteNextTicketToCoworking(String type) {
         log.info("Getting first waiting ticket");
         var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("WAIT", type)
@@ -131,7 +146,7 @@ public class TicketService {
     public Ticket inviteNextTicketToCheck(String type) {
         log.info("Getting first waiting ticket");
         var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartAddedTimestampAsc("ADDED", type)
-                .orElseGet(() -> ticketRepository.findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc("ADDED", "BASIC")
+                .orElseGet(() -> ticketRepository.findFirstByStatusAndTypeOrderByStartAddedTimestampAsc("ADDED", "BASIC")
                         .orElseThrow(() -> new ResourceNotFoundException("No waiting tickets found")));
 
 

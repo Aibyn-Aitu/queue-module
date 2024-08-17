@@ -94,7 +94,7 @@ public class DisplayController {
         return ticketRepository.findAll()
                 .stream()
                 .filter(ticket -> !"CREATED".equals(ticket.getStatus()))
-                .filter(ticket -> ticket.getStartWaitingTimestamp() >= startOfToday)
+                .filter(ticket -> ticket.getStartAddedTimestamp() >= startOfToday)
                 //.filter(ticket -> ticket.getCreatedTimestamp() >= startOfToday)
                 .collect(Collectors.toList());
     }
