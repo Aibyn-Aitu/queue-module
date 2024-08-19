@@ -2,6 +2,8 @@ package kz.aitu.abiturqueue.repository;
 
 import kz.aitu.abiturqueue.model.entity.Ticket;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Pageable; // ensure correct import here
 
@@ -17,6 +19,11 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findByStatusOrderByStartWaitingTimestampAsc(String status);
     List<Ticket> findByStatusOrderByStartCoworkingTimestampAsc(String status);
     List<Ticket> findByStatusOrderByStartReadyTimestampAsc(String status);
+    List<Ticket> findByStatusNotOrderByStartAddedTimestampAsc(String status);
+
+    @Query("SELECT t FROM Ticket t WHERE t.status NOT LIKE :status AND t.createdTimestamp > :startOfDay ORDER BY t.number ASC")
+    List<Ticket> findByStatusNotAndCreatedTodayOrderByNumberAsc(@Param("status") String status, @Param("startOfDay") Long startOfDay);
+
     List<Ticket> findByStatusOrderByStartAddedTimestampAsc(String status);
     List<Ticket> findByStatusOrderByStartCheckTimestampAsc(String status);
     List<Ticket> findByStatusAndTableNumberOrderByStartWaitingTimestampAsc(String status, Integer tableNum);
@@ -29,6 +36,8 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     Optional<Ticket> findFirstByStatusAndTypeOrderByStartWaitingTimestampAsc(String status, String type);
     Optional<Ticket> findFirstByStatusAndTypeOrderByStartReadyTimestampAsc(String status, String type);
     Optional<Ticket> findFirstByStatusAndTypeOrderByStartAddedTimestampAsc(String status, String type);
+
+    Optional<Ticket> findFirstByStatusAndTypeOrderByStartOnlineTimestampAsc(String status, String type);
     Optional<Ticket> findFirstByStatusAndTypeOrderByStartCoworkingTimestampAsc(String status, String type);
 
     Optional<Ticket> findFirstByStatusAndTypeOrderByNumberAsc(String status, String type);

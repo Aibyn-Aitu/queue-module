@@ -223,7 +223,7 @@
                                 console.log('Ticket:', response.data);
                                 self.ticketNumber = response.data.number;
                                 self.tableNumber = response.data.tableNumber;
-                                var date = new Date(response.data.startWaitingTimestamp);
+                                var date = new Date(response.data.startOnlineTimestamp);
                                 self.createdTime = date.toLocaleString();
 
                                 // Проверка, выбран ли слот времени

@@ -42,6 +42,9 @@ public class Ticket {
     @Column(name = "startReadyTimestamp")
     private Long startReadyTimestamp;
 
+    @Column(name = "startOnlineTimestamp")
+    private Long startOnlineTimestamp;
+
     @Column(name = "startServedTimestamp")
     private Long startServedTimestamp;
 

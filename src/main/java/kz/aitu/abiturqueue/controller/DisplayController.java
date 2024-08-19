@@ -66,6 +66,11 @@ public class DisplayController {
         return ticketRepository.findByStatusOrderByStartReadyTimestampAsc("READY");
     }
 
+    @GetMapping("/tickets/not-created")
+    public List<Ticket> getNotCreatedTickets() {
+        return ticketService.getTodayTicketsExcludingStatus("CREATED");
+    }
+
     @GetMapping("/tickets/check")
     public List<Ticket> getCheckTickets() {
         return ticketRepository.findByStatusOrderByStartCheckTimestampAsc("CHECK");

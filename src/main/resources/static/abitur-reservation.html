@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <base href="/">
-    <title>Бронирование очереди</title>
+    <title>Astana IT University - бронирование очереди</title>
+    <link rel="icon" href="logo-aitu.png" type="image/x-icon">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
@@ -18,10 +19,22 @@
         .form-control {
             font-size: 1.5em;
             height: calc(1.5em + 1rem + 2px);
+            transition: transform 0.2s ease; /* Добавление анимации для полей */
+            opacity: 0;
+            animation: fadeInScale 1s forwards;
+        }
+        .form-control:focus {
+            transform: scale(1.05); /* Увеличение поля при фокусе */
         }
         .btn-lg {
             font-size: 1.5em;
             padding: 0.75rem 1.25rem;
+            transition: transform 0.2s ease; /* Добавление анимации для кнопки */
+            opacity: 0;
+            animation: fadeInScale 1.2s forwards;
+        }
+        .btn-lg:hover {
+            transform: scale(1.05); /* Увеличение кнопки при наведении */
         }
         .container {
             max-width: 600px;
@@ -29,11 +42,53 @@
         .alert {
             font-size: 1.2em;
             margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeInUp 1s forwards;
+        }
+        .logo {
+            display: block;
+            margin: 0 auto;
+            max-width: 300px;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeIn 2s forwards; /* Анимация для логотипа */
+        }
+        h1 {
+            opacity: 0;
+            animation: fadeInUp 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
     </style>
 </head>
 <body ng-app="registerApp" ng-controller="RegisterController as registerCtrl">
 <div class="container">
+    <img src="logo.png" alt="Логотип университета" class="logo"/>
     <h1 class="text-center">Регистрация в очередь</h1>
 
     <br/>
@@ -54,7 +109,7 @@
         <div class="form-group">
             <input type="text" class="form-control" ng-model="registerCtrl.user.iin" placeholder="ИИН" required/>
         </div>
-        <button ng-disabled="registerCtrl.loading" ng-click="registerCtrl.createUser()" type="button" class="btn btn-primary btn-lg btn-block">REGISTER</button>
+        <button ng-disabled="registerCtrl.loading" ng-click="registerCtrl.createUser()" type="button" class="btn btn-primary btn-lg btn-block">Подтвердить</button>
     </form>
 </div>
 

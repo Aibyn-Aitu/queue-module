@@ -92,7 +92,7 @@ public class UserService {
                 Ticket ticket = ticketRepository.findFirstByStatusAndTypeOrderByNumberAsc("CREATED", "BENEFIT").orElse(null);
                 if (ticket != null) {
                     ticket.setStatus("ONLINE");
-                    ticket.setStartWaitingTimestamp(System.currentTimeMillis());
+                    ticket.setStartOnlineTimestamp(System.currentTimeMillis());
                     user.setTicketId(ticket.getId());
                     userRepository.save(user);
                     return ticket.getNumber();

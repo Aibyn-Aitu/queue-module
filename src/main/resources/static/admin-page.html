@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Queue to Table</title>
+    <title>Admin Page</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
 </head>
@@ -31,7 +31,8 @@
             </div>
         </div>
     </div>
-    <h1 class="text-center">Table Queue</h1>
+
+    <h1 class="text-center">Admin Page</h1>
 
     <!-- Search box -->
     <div class="form-group">
@@ -43,19 +44,27 @@
         <thead>
         <tr>
             <th scope="col">Номер талона</th>
-            <th scope="col">Время подписания договора</th>
+            <th scope="col">Status</th>
+            <th scope="col">Отменен</th>
+            <th scope="col">Завершен</th>
             <th scope="col">Время регистрации</th>
             <th scope="col">Время проверки документов</th>
-            <th scope="col">Status</th>
+            <th scope="col">Время подписания договора</th>
+            <th scope="col">Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="ticket in manager.servedTickets | filter:{number: manager.searchNumber} | orderBy:'startServedTimestamp'">
+        <tr ng-repeat="ticket in manager.servedTickets | filter:{number: manager.searchNumber}">
             <th scope="row">{{ticket.number}}</th>
-            <td>{{ticket.startReadyTimestamp | date:'HH:mm:ss'}}</td>
-            <td>{{ticket.startAddedTimestamp | date:'HH:mm'}}</td>
-            <td>{{ticket.startWaitingTimestamp | date:'HH:mm:ss'}}</td>
             <td>{{ticket.status}}</td>
+            <td>{{ticket.startCancelTimestamp ? (ticket.startCancelTimestamp | date:'HH:mm') : ' '}}</td>
+            <td>{{ticket.startInProgressTimestamp ? (ticket.startInProgressTimestamp | date:'HH:mm') : ' '}}</td>
+            <td>{{ticket.startAddedTimestamp ? (ticket.startAddedTimestamp | date:'HH:mm') : ' '}}</td>
+            <td>{{ticket.startWaitingTimestamp ? (ticket.startWaitingTimestamp | date:'HH:mm') : ' '}}</td>
+            <td>{{ticket.startReadyTimestamp ? (ticket.startReadyTimestamp | date:'HH:mm') : ' '}}</td>
+            <td>
+                <button class="btn btn-danger" ng-click="manager.toCancelTicket(ticket.id)">Отменить</button>
+            </td>
         </tr>
         </tbody>
     </table>
@@ -71,7 +80,7 @@
             self.searchNumber = ''; // Model for search input
 
             // Fetch served tickets
-            $http.get('/api/display/tickets/ready')
+            $http.get('/api/display/tickets/not-created')
                 .then(function(response) {
                     self.servedTickets = response.data;
                 });
@@ -99,7 +108,7 @@
                     .then(function(response) {
                         console.log("Invited next ticket");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/ready')
+                        $http.get('/api/display/tickets/not-created')
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });
@@ -111,7 +120,7 @@
                     .then(function(response) {
                         console.log("Moved ticket to progress");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/ready')
+                        $http.get('/api/display/tickets/not-created')
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });
@@ -123,7 +132,7 @@
                     .then(function(response) {
                         console.log("Cancelled ticket");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/ready')
+                        $http.get('/api/display/tickets/not-created')
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });

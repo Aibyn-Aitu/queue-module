@@ -40,6 +40,15 @@ public class TicketService {
         return ticketRepository.saveAll(ticketList);
     }
 
+    public List<Ticket> getTodayTicketsExcludingStatus(String status) {
+        LocalDate date = LocalDate.now();
+        ZoneId zoneId = ZoneId.systemDefault();
+        Long startOfDay = date.atStartOfDay(zoneId).toEpochSecond() * 1000 - 68400000;
+        System.out.println(startOfDay);
+
+        return ticketRepository.findByStatusNotAndCreatedTodayOrderByNumberAsc(status, startOfDay);
+    }
+
 
     //Status WAIT auto
     public List<Ticket> addNewTicketsV2() {
@@ -116,8 +125,8 @@ public class TicketService {
 
     public Ticket inviteNextBenefitTicketToTable(String type, Integer table) {
         log.info("Getting first waiting ticket");
-        var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartReadyTimestampAsc("ADDED", type)
-                .orElseGet(() -> ticketRepository.findFirstByStatusAndTypeOrderByStartReadyTimestampAsc("ADDED", "BENEFIT")
+        var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartOnlineTimestampAsc("ONLINE", type)
+                .orElseGet(() -> ticketRepository.findFirstByStatusAndTypeOrderByStartOnlineTimestampAsc("ONLINE", "BENEFIT")
                         .orElseThrow(() -> new ResourceNotFoundException("No waiting tickets found")));
 
 
