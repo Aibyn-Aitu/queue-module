@@ -250,6 +250,19 @@ public class TicketService {
         return updatedTicket;
     }
 
+    public Ticket toCancelTicketFromAdmin(Long id) {
+        log.info("Moving ticket with id {} to cancel", id);
+        var ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id " + id));
+
+        ticket.setStatus("CANCEL");
+        ticket.setStartCancelTimestamp(System.currentTimeMillis());
+
+        var updatedTicket = ticketRepository.save(ticket);
+        log.info("Moved ticket to wait: {}", updatedTicket);
+        return updatedTicket;
+    }
+
     public Ticket toDeleteFromCheck(Long id) {
         log.info("Moving ticket with id {} to cancel", id);
         var ticket = ticketRepository.findById(id)

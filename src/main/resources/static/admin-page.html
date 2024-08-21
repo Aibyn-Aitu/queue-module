@@ -128,7 +128,7 @@
             };
 
             self.toCancelTicket = function(id) {
-                $http.put('/api/manager/' + id + '/toCancel')
+                $http.put('/api/manager/' + id + '/toCancelFromAdmin')
                     .then(function(response) {
                         console.log("Cancelled ticket");
                         // Reload served tickets

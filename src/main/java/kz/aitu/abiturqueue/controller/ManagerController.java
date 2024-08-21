@@ -68,6 +68,11 @@ public class ManagerController {
         return ResponseEntity.ok(ticketService.toCancelTicket(id));
     }
 
+    @PutMapping("/{id}/toCancelFromAdmin")
+    public ResponseEntity<Ticket> toCancelTicketFromAdmin(@PathVariable Long id) {
+        return ResponseEntity.ok(ticketService.toCancelTicketFromAdmin(id));
+    }
+
     @PutMapping("/{id}/toDeleteCheck")
     public ResponseEntity<Ticket> toDeleteFromCheck(@PathVariable Long id) {
         return ResponseEntity.ok(ticketService.toDeleteFromCheck(id));
