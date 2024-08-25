@@ -36,7 +36,7 @@ public class TimeSlotController {
 
     @GetMapping("/get-all-null-ticket")
     public List<TimeSlot> getAllNullTickets() {
-        return timeSlotRepository.findByTicketIdIsNull();
+        return timeSlotRepository.findByTicketIdIsNullOrderByIdAsc();
     }
 
     @PostMapping("/assign-ticket")
