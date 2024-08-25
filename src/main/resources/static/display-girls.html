@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Queue UI</title>
+    <!-- Add Bootstrap CSS for styling -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <!-- Add AngularJS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <!-- Add qrcodejs library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Add YouTube iframe API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        .full-height {
+            height: 100%;
+        }
+
+        .text {
+            color: whitesmoke;
+        }
+
+        .big-font {
+            font-size: 3em;
+        }
+
+        .mid-font {
+            font-size: 2em;
+        }
+
+        .card {
+            margin: 7px;
+        }
+
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .flex-item {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .qr-code-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .qr-code {
+            max-width: 150px;
+            margin: 20px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 15px;
+        }
+
+        /* Right column styles */
+        .right-column {
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body ng-app="queueApp" ng-controller="QueueController as queue" class="bg-dark">
+
+<div class="container col-10">
+    <div class="row">
+        <div class="col text-center">
+            <div class="col text-left text">
+                <h2>{{queue.currentTime | date:'HH:mm'}}</h2>
+            </div>
+
+            <div class="row flex-grow-1">
+                <div class="col text-center">
+                    <h2 class="text">Girls</h2>
+                    <h5 class="text">Чтобы зарегистрироваться в очереди, отсканируйте QR-код</h5>
+                    <div class="qr-code-container">
+                        <div id="qrcode" class="qr-code"></div>
+                    </div>
+                </div>
+            </div>
+            <h3 class="text">Сейчас подошла ваша очередь</h3>
+            <div class="flex-container">
+                <div class="flex-item" ng-repeat="ticket in queue.servedTickets | orderBy: 'type'">
+                    <div class="card text-center"
+                         ng-class="{'bg-warning': ticket.type === 'BENEFIT'}">
+                        <div class="card-body">
+                            <h3 class="big-font text">{{ticket.number}}</h3>
+                            <h4 class="text">{{ticket.tableNumber}} стол</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    angular.module('queueApp', []).controller('QueueController', ['$http', '$interval', function ($http, $interval) {
+        var self = this;
+
+        self.servedTickets = [];
+        self.coworkingTickets = [];
+        self.checkTickets = [];
+        self.waitingTickets = [];
+        self.stats = {};
+
+        var loadTickets = function () {
+            $http.get('/api/display-house/tickets/served')
+                .then(function (response) {
+                    self.servedTickets = response.data;
+                });
+
+            $http.get('/api/display-house/tickets/coworking')
+                .then(function (response) {
+                    self.coworkingTickets = response.data;
+                });
+
+            $http.get('/api/display-house/tickets/check')
+                .then(function (response) {
+                    self.checkTickets = response.data;
+                });
+
+            /*$http.get('/api/display/tickets/wait/10')
+                .then(function (response) {
+                    self.waitingTickets = response.data;
+                });
+
+            $http.get('/api/display/tickets/statistics')
+                .then(function (response) {
+                    self.stats = response.data;
+                });*/
+        }
+
+        // Load tickets initially and then every 5 seconds
+        loadTickets();
+        $interval(loadTickets, 5000);
+
+        // Set the current time
+        self.currentTime = new Date();
+
+        // Update the time every second
+        $interval(function () {
+            self.currentTime = new Date();
+        }, 1000);
+    }]);
+
+    // Generate QR code using qrcode.js
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        text: "https://queue-aitu.up.railway.app/abitur-house-girls.html", // Replace with your registration link
+        width: 130,
+        height: 130
+    });
+
+
+</script>
+</body>
+</html>

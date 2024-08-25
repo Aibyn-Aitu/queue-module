@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+    <title>Verification Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+
+    <style>
+        .big-font {
+            font-size: 2em;
+        }
+        .container {
+            max-width: 400px;
+            margin-top: 20px;
+        }
+        .form-control {
+            font-size: 1.5em;
+            height: calc(1.5em + 1rem + 2px);
+        }
+        .btn-lg {
+            font-size: 1.5em;
+            padding: 0.75rem 1.25rem;
+        }
+    </style>
+</head>
+<body ng-app="registerApp" ng-controller="VerificationController as verificationCtrl">
+<div class="container">
+    <h1 class="text-center">Подтверждение почты</h1>
+    <br/>
+    <div class="alert alert-info" role="alert">
+        На указанную почту отправлен код. Введите код чтобы продолжить.
+    </div>
+    <div ng-if="verificationCtrl.errorMessage" class="alert alert-danger" role="alert">
+        {{ verificationCtrl.errorMessage }}
+    </div>
+    <form>
+        <div class="form-group">
+            <input type="text" class="form-control" ng-model="verificationCtrl.code" placeholder="Введите код" required/>
+        </div>
+        <button ng-disabled="verificationCtrl.loading" ng-click="verificationCtrl.verifyCode()" type="button" class="btn btn-primary btn-lg btn-block">Подтвердить</button>
+    </form>
+</div>
+
+<script>
+    var app = angular.module('registerApp', ['ngRoute']);
+
+    app.controller('VerificationController', function($http, $window) {
+        var self = this;
+        self.code = '';
+        self.loading = false;
+        self.errorMessage = '';
+
+        self.verifyCode = function() {
+            if (!self.code) {
+                alert("Поле не может быть пустым");
+                return;
+            }
+            self.loading = true;
+            self.errorMessage = '';
+            $http.post('/api/house-user/verification-girls', { userId: $window.localStorage.getItem('userId'), code: self.code })
+                .then(function(response) {
+                    var ticketNumber = response.data;
+                    if (ticketNumber) {
+                        $window.localStorage.setItem('ticketNumber', ticketNumber); // Сохраняем ticketNumber в localStorage
+                        $window.location.href = '/ticket-information-house.html'; // Перенаправляем на страницу информации о билете
+                    } else {
+                        self.errorMessage = "Неправильный код";
+                        self.loading = false;
+                    }
+                }, function(error) {
+                    self.loading = false;
+                    self.errorMessage = "Неправильный код";
+                });
+        };
+    });
+</script>
+</body>
+</html>

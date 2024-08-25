@@ -1,11 +1,10 @@
 package kz.aitu.abiturqueue.controller;
 
-import kz.aitu.abiturqueue.model.dto.CreatedTicketDTO;
 import kz.aitu.abiturqueue.model.dto.CreatedTicketHouseDto;
 import kz.aitu.abiturqueue.model.dto.TicketStatisticDTO;
-import kz.aitu.abiturqueue.model.entity.Ticket;
-import kz.aitu.abiturqueue.repository.TicketRepository;
-import kz.aitu.abiturqueue.service.TicketService;
+import kz.aitu.abiturqueue.model.entity.TicketHouse;
+import kz.aitu.abiturqueue.repository.TicketHouseRepository;
+import kz.aitu.abiturqueue.service.TicketHouseService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.domain.PageRequest;
@@ -22,78 +21,78 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/display")
-public class DisplayController {
+@RequestMapping("/api/display-house")
+public class DisplayHouseController {
 
-    private final TicketRepository ticketRepository;
-    private final TicketService ticketService;
+    private final TicketHouseRepository ticketRepository;
+    private final TicketHouseService ticketService;
 
     @GetMapping("/tickets/wait/10")
-    public List<Ticket> getFirst10WaitingTickets() {
+    public List<TicketHouse> getFirst10WaitingTickets() {
         return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("WAIT", PageRequest.of(0, 10));
     }
 
     @GetMapping("/tickets/created")
-    public CreatedTicketDTO getCreatedTickets() {
+    public CreatedTicketHouseDto getCreatedTickets() {
 
         var ticketBasic = ticketRepository.findFirstByStatusAndTypeOrderByNumberAsc("CREATED", "BASIC").orElse(null);
         var ticketBenefit = ticketRepository.findFirstByStatusAndTypeOrderByNumberAsc("CREATED", "BENEFIT").orElse(null);
 
-        return new CreatedTicketDTO(ticketBasic, ticketBenefit);
+        return new CreatedTicketHouseDto(ticketBasic, ticketBenefit);
     }
 
     @GetMapping("/tickets/wait")
-    public List<Ticket> getWaitTickets() {
+    public List<TicketHouse> getWaitTickets() {
         return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("WAIT");
     }
 
     @GetMapping("/tickets/served/table/{tableNum}")
-    public List<Ticket> getServedTickets(@PathVariable Integer tableNum) {
+    public List<TicketHouse> getServedTickets(@PathVariable Integer tableNum) {
         return ticketRepository.findByStatusAndTableNumberOrderByStartWaitingTimestampAsc("SERVED", tableNum);
     }
 
     @GetMapping("/tickets/served/benefit/table/{tableNum}")
-    public List<Ticket> getServedBenefitTickets(@PathVariable Integer tableNum) {
+    public List<TicketHouse> getServedBenefitTickets(@PathVariable Integer tableNum) {
         return ticketRepository.findByStatusAndTableNumberAndTypeOrderByStartWaitingTimestampAsc("SERVED", tableNum, "BENEFIT");
     }
 
     @GetMapping("/tickets/coworking")
-    public List<Ticket> getCoworkingTickets() {
+    public List<TicketHouse> getCoworkingTickets() {
         return ticketRepository.findByStatusOrderByStartCoworkingTimestampAsc("COWORKING");
     }
 
     @GetMapping("/tickets/ready")
-    public List<Ticket> getReadyTickets() {
+    public List<TicketHouse> getReadyTickets() {
         return ticketRepository.findByStatusOrderByStartReadyTimestampAsc("READY");
     }
 
     @GetMapping("/tickets/not-created")
-    public List<Ticket> getNotCreatedTickets() {
-        return ticketService.getTodayTicketsExcludingStatus("CREATED");
+    public List<TicketHouse> getNotCreatedTickets() {
+        return ticketService.getTodayTicketHousesExcludingStatus("CREATED");
     }
 
     @GetMapping("/tickets/check")
-    public List<Ticket> getCheckTickets() {
+    public List<TicketHouse> getCheckTickets() {
         return ticketRepository.findByStatusOrderByStartCheckTimestampAsc("CHECK");
     }
 
     @GetMapping("/tickets/served")
-    public List<Ticket> getServedTickets() {
+    public List<TicketHouse> getServedTickets() {
         return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("SERVED");
     }
 
     @GetMapping("/tickets/served/{type}")
-    public List<Ticket> getServedTickets(@PathVariable String type) {
+    public List<TicketHouse> getServedTickets(@PathVariable String type) {
         return ticketRepository.findByStatusAndTypeOrderByStartWaitingTimestampAsc("SERVED", type);
     }
 
     @GetMapping("/tickets/progress")
-    public List<Ticket> getProgressTickets() {
+    public List<TicketHouse> getProgressTickets() {
         return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("PROGRESS");
     }
 
     @GetMapping("/tickets/admin")
-    public List<Ticket> getTickets() {
+    public List<TicketHouse> getTickets() {
         LocalDate today = LocalDate.now();
         long startOfToday = today.atStartOfDay(ZoneId.systemDefault()).toEpochSecond() * 1000;
 
@@ -132,7 +131,7 @@ public class DisplayController {
 
     @GetMapping("/start")
     public String cleanAndCreateTickets() {
-        ticketService.cleanAndCreateTickets();
+        ticketService.cleanAndCreateTicketHouses();
         return null;
     }
 }

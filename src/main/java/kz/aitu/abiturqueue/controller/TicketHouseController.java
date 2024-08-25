@@ -1,10 +1,10 @@
 package kz.aitu.abiturqueue.controller;
 
-import kz.aitu.abiturqueue.model.dto.CreatedTicketDTO;
+import kz.aitu.abiturqueue.model.dto.CreatedTicketHouseDto;
 import kz.aitu.abiturqueue.model.dto.TicketStatisticDTO;
-import kz.aitu.abiturqueue.model.entity.Ticket;
-import kz.aitu.abiturqueue.repository.TicketRepository;
-import kz.aitu.abiturqueue.service.TicketService;
+import kz.aitu.abiturqueue.model.entity.TicketHouse;
+import kz.aitu.abiturqueue.repository.TicketHouseRepository;
+import kz.aitu.abiturqueue.service.TicketHouseService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.domain.PageRequest;
@@ -22,57 +22,57 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/tickets")
-public class TicketController {
+@RequestMapping("/api/tickets-house")
+public class TicketHouseController {
 
-    private final TicketRepository ticketRepository;
-    private final TicketService ticketService;
+    private final TicketHouseRepository ticketRepository;
+    private final TicketHouseService ticketService;
 
     @GetMapping("/wait/10")
-    public List<Ticket> getFirst10WaitingTickets() {
+    public List<TicketHouse> getFirst10WaitingTickets() {
         return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("WAIT", PageRequest.of(0, 10));
     }
 
     @GetMapping("/created")
-    public CreatedTicketDTO getCreatedTickets() {
+    public CreatedTicketHouseDto getCreatedTickets() {
 
         var ticketBasic = ticketRepository.findFirstByStatusAndTypeOrderByNumberAsc("CREATED", "BASIC").orElse(null);
         var ticketBenefit = ticketRepository.findFirstByStatusAndTypeOrderByNumberAsc("CREATED", "BENEFIT").orElse(null);
 
-        return new CreatedTicketDTO(ticketBasic, ticketBenefit);
+        return new CreatedTicketHouseDto(ticketBasic, ticketBenefit);
     }
 
     @GetMapping("/wait")
-    public List<Ticket> getWaitTickets() {
+    public List<TicketHouse> getWaitTickets() {
         return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("WAIT");
     }
 
     @GetMapping("/served")
-    public List<Ticket> getServedTickets() {
+    public List<TicketHouse> getServedTickets() {
         return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("SERVED");
     }
     @GetMapping("/coworking")
-    public List<Ticket> getCoworkingTickets() {
+    public List<TicketHouse> getCoworkingTickets() {
         return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("COWORKING");
     }
 
     @GetMapping("/check")
-    public List<Ticket> getCheckTickets() {
+    public List<TicketHouse> getCheckTickets() {
         return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("CHECK");
     }
 
     @GetMapping("/served/{type}")
-    public List<Ticket> getServedTickets(@PathVariable String type) {
+    public List<TicketHouse> getServedTickets(@PathVariable String type) {
         return ticketRepository.findByStatusAndTypeOrderByStartWaitingTimestampAsc("SERVED", type);
     }
 
     @GetMapping("/progress")
-    public List<Ticket> getProgressTickets() {
+    public List<TicketHouse> getProgressTickets() {
         return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("PROGRESS");
     }
 
     @GetMapping("/admin")
-    public List<Ticket> getTickets() {
+    public List<TicketHouse> getTickets() {
         LocalDate today = LocalDate.now();
         long startOfToday = today.atStartOfDay(ZoneId.systemDefault()).toEpochSecond() * 1000;
 
@@ -107,8 +107,8 @@ public class TicketController {
     }
 
     @GetMapping("/find-by-id")
-    public ResponseEntity<Ticket> findTicketById(@RequestParam Long id){
-        Optional<Ticket> ticket = ticketService.getTicketById(id);
+    public ResponseEntity<TicketHouse> findTicketById(@RequestParam Long id){
+        Optional<TicketHouse> ticket = ticketService.getTicketHouseById(id);
         return ticket.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 }
