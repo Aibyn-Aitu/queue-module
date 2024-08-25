@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-app="managerApp" ng-controller="ManagerController as manager">
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3" ng-class="{'bg-danger': manager.stats.waitCount > 0}">
+                <div class="card-header">В ожидании {{manager.stats.waitCount}}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3" ng-class="{'bg-warning': manager.stats.coworkingCount > 0}">
+                <div class="card-header">Пишут договор {{manager.stats.coworkingCount}}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3" ng-class="{'bg-info': manager.stats.readyCount > 0}">
+                <div class="card-header">Готово {{manager.stats.readyCount}}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Завершено {{manager.stats.progressCount}}</div>
+            </div>
+        </div>
+    </div>
+
+    <h1 class="text-center">Admin Page</h1>
+
+    <!-- Search box -->
+    <div class="form-group">
+        <input type="text" class="form-control" ng-model="manager.searchNumber" placeholder="Поиск по номеру талона">
+    </div>
+
+    <h2 class="mt-4">Талоны</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Номер талона</th>
+            <th scope="col">Status</th>
+            <th scope="col">Отменен</th>
+            <th scope="col">Завершен</th>
+            <th scope="col">Время регистрации</th>
+            <th scope="col">Время проверки документов</th>
+            <th scope="col">Время подписания договора</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="ticket in manager.servedTickets | filter:{number: manager.searchNumber}">
+            <th scope="row">{{ticket.number}}</th>
+            <td>{{ticket.status}}</td>
+            <td>{{ticket.startCancelTimestamp ? (ticket.startCancelTimestamp | date:'HH:mm') : ' '}}</td>
+            <td>{{ticket.startInProgressTimestamp ? (ticket.startInProgressTimestamp | date:'HH:mm') : ' '}}</td>
+            <td>{{ticket.startAddedTimestamp ? (ticket.startAddedTimestamp | date:'HH:mm') : ' '}}</td>
+            <td>{{ticket.startWaitingTimestamp ? (ticket.startWaitingTimestamp | date:'HH:mm') : ' '}}</td>
+            <td>{{ticket.startReadyTimestamp ? (ticket.startReadyTimestamp | date:'HH:mm') : ' '}}</td>
+            <td>
+                <button class="btn btn-danger" ng-click="manager.toCancelTicket(ticket.id)">Отменить</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    angular.module('managerApp', [])
+        .controller('ManagerController', ['$http', '$interval', function($http, $interval) {
+            var self = this;
+            self.servedTickets = [];
+            self.stats = {};
+            self.type = 'BASIC';
+            self.searchNumber = ''; // Model for search input
+
+            // Fetch served tickets
+            $http.get('/api/display-house/tickets/not-created')
+                .then(function(response) {
+                    self.servedTickets = response.data;
+                });
+
+            $http.get('/api/display-house/tickets/statistics')
+                .then(function (response) {
+                    self.stats = response.data;
+                });
+
+            // Set the current time
+            self.currentTime = new Date();
+
+            // Update the time every minute
+            $interval(function () {
+                self.currentTime = new Date();
+
+                $http.get('/api/display-house/tickets/statistics')
+                    .then(function (response) {
+                        self.stats = response.data;
+                    });
+            }, 60000);
+
+            self.inviteNextTicket = function() {
+                $http.post('/api/manager-house/invite/' + self.type)
+                    .then(function(response) {
+                        console.log("Invited next ticket");
+                        // Reload served tickets
+                        $http.get('/api/display-house/tickets/not-created')
+                            .then(function(response) {
+                                self.servedTickets = response.data;
+                            });
+                    });
+            };
+
+            self.toProgressTicket = function(id) {
+                $http.put('/api/manager-house/' + id + '/toReady')
+                    .then(function(response) {
+                        console.log("Moved ticket to progress");
+                        // Reload served tickets
+                        $http.get('/api/display-house/tickets/not-created')
+                            .then(function(response) {
+                                self.servedTickets = response.data;
+                            });
+                    });
+            };
+
+            self.toCancelTicket = function(id) {
+                $http.put('/api/manager-house/' + id + '/toCancelFromAdmin')
+                    .then(function(response) {
+                        console.log("Cancelled ticket");
+                        // Reload served tickets
+                        $http.get('/api/display-house/tickets/not-created')
+                            .then(function(response) {
+                                self.servedTickets = response.data;
+                            });
+                    });
+            };
+        }]);
+</script>
+</body>
+</html>

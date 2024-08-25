@@ -17,6 +17,7 @@ public interface TicketHouseRepository extends JpaRepository<TicketHouse, Long> 
     List<TicketHouse> findByStatusAndTypeOrderByStartWaitingTimestampAsc(String status, String type, Pageable pageable);
     List<TicketHouse> findByStatusAndIdIsAfterOrderByIdAsc(String status, Long minId, Pageable pageable);
     List<TicketHouse> findByStatusOrderByStartWaitingTimestampAsc(String status);
+    List<TicketHouse> findByStatusAndTypeOrderByStartAddedTimestampAsc(String status, String type);
     List<TicketHouse> findByStatusOrderByStartCoworkingTimestampAsc(String status);
     List<TicketHouse> findByStatusOrderByStartReadyTimestampAsc(String status);
     List<TicketHouse> findByStatusNotOrderByStartAddedTimestampAsc(String status);

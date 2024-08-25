@@ -81,6 +81,16 @@ public class DisplayHouseController {
         return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("SERVED");
     }
 
+    @GetMapping("/tickets/served/boys")
+    public List<TicketHouse> getServedBoysTickets() {
+        return ticketRepository.findByStatusAndTypeOrderByStartAddedTimestampAsc("SERVED", "BASIC");
+    }
+
+    @GetMapping("/tickets/served/girls")
+    public List<TicketHouse> getServedGirlsTickets() {
+        return ticketRepository.findByStatusAndTypeOrderByStartAddedTimestampAsc("SERVED", "BENEFIT");
+    }
+
     @GetMapping("/tickets/served/{type}")
     public List<TicketHouse> getServedTickets(@PathVariable String type) {
         return ticketRepository.findByStatusAndTypeOrderByStartWaitingTimestampAsc("SERVED", type);

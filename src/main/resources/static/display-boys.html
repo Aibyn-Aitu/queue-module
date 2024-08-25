@@ -122,7 +122,7 @@
         self.stats = {};
 
         var loadTickets = function () {
-            $http.get('/api/display-house/tickets/served')
+            $http.get('/api/display-house/tickets/served/boys')
                 .then(function (response) {
                     self.servedTickets = response.data;
                 });
