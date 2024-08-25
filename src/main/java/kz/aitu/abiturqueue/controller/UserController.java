@@ -57,4 +57,17 @@ public class UserController {
         Optional<User> user = userService.getById(id);
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
+
+    @GetMapping("/find/ticket/{id}")
+    public ResponseEntity<User> findUserByTicketId(@PathVariable Long id) {
+        User user = userService.getByTicketId(id);
+        if (user != null) {
+            // Если пользователь найден, возвращаем его с HTTP статусом 200 OK
+            return ResponseEntity.ok(user);
+        } else {
+            // Если пользователь не найден, возвращаем HTTP статус 404 Not Found
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

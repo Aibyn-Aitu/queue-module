@@ -23,4 +23,10 @@ public class TimeSlot {
 
     @Column(name = "ticket_id")
     private Long ticketId;
+
+    @Column(name = "table_number")
+    private Long tableNumber;
+
+    @Column(name = "status")
+    private String status;
 }

@@ -14,4 +14,8 @@ public interface TimeSlotRepository extends JpaRepository<TimeSlot, Long> {
 
 
     Optional<TimeSlot> findByTicketId(Long id);
+
+    Optional<TimeSlot> findFirstByStatusAndTicketIdIsNotNullOrderByTimeAsc(String status);
+
+    List<TimeSlot> findAllByStatusAndTableNumberAndTicketIdIsNotNullOrderByTimeAsc(String status, Long tableNumber);
 }

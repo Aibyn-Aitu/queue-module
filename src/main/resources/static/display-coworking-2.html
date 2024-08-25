@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Coworking Time Slot Display</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .full-height {
+            height: 100%;
+        }
+        .text {
+            color: whitesmoke;
+        }
+        .big-font {
+            font-size: 3em;
+        }
+        .mid-font {
+            font-size: 2em;
+        }
+        .card {
+            margin: 7px;
+        }
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .flex-item {
+            flex-grow: 1;
+            text-align: center;
+        }
+        .qr-code-container {
+            display: flex;
+            justify-content: center;
+        }
+        .qr-code {
+            max-width: 150px;
+            margin: 20px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+<body ng-app="coworkingApp" ng-controller="CoworkingController as coworking" class="bg-dark">
+
+<div class="container col-10">
+    <div class="row">
+        <div class="col text-center">
+            <div class="col text-left text">
+                <h2>{{coworking.currentTime | date:'HH:mm'}}</h2>
+            </div>
+
+            <div class="row flex-grow-1">
+                <div class="col text-center">
+                    <h5 class="text">Для регистрации в coworking, отсканируйте QR-код</h5>
+                    <div class="qr-code-container">
+                        <div id="qrcode" class="qr-code"></div>
+                    </div>
+                </div>
+            </div>
+            <h3 class="text">Ваше время пришло</h3>
+            <div class="flex-container">
+                <div class="flex-item" ng-repeat="slot in coworking.currentSlots | orderBy: 'type'">
+                    <div class="card text-center" ng-class="{'bg-primary': slot.status === 'TABLE'}">
+                        <div class="card-body">
+                            <h3 class="big-font text">{{slot.user.lastname}} {{slot.user.firstname}}</h3>
+                            <h4 class="text">{{slot.tableNumber}} стол</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="text">Подойдите в Coworking</h3>
+            <div class="flex-container">
+                <div class="flex-item" ng-repeat="slot in coworking.nextSlots | orderBy: 'type'">
+                    <div class="card text-center"
+                         ng-class="{'bg-success': slot.status === 'TABLE'}">
+                        <div class="card-body">
+                            <h4 class="big-font text">{{slot.ticketId}}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    angular.module('coworkingApp', []).controller('CoworkingController', ['$http', '$interval', function ($http, $interval) {
+        var self = this;
+
+        self.currentSlots = [];
+        self.nextSlots = [];
+
+        var loadSlots = function () {
+            $http.get('/api/time-slot/get-all')
+                .then(function (response) {
+                    self.currentSlots = response.data.filter(slot => slot.status === 'TABLE');
+                    self.nextSlots = response.data.filter(slot => slot.status === 'CURRENT');
+                    // Fetch user details for each slot
+                    self.currentSlots.forEach(slot => {
+                        if (slot.ticketId) {
+                            self.fetchUserDetails(slot);
+                        }
+                    });
+                });
+        }
+
+
+        // Load slots initially and then every 5 seconds
+        loadSlots();
+        $interval(loadSlots, 5000);
+
+        // Set the current time
+        self.currentTime = new Date();
+
+        // Update the time every second
+        $interval(function () {
+            self.currentTime = new Date();
+        }, 1000);
+
+        self.fetchUserDetails = function(slot) {
+            $http.get('/api/user/find/ticket/' + slot.ticketId)
+                .then(function(response) {
+                    // Attach user details directly to the slot object
+                    slot.user = response.data;
+                }, function(error) {
+                    console.error('Failed to fetch user details', error);
+                });
+        };
+    }]);
+
+    // Generate QR code
+    new QRCode(document.getElementById("qrcode"), {
+        text: "https://queue-aitu.up.railway.app/user-page2.html", // Replace with your registration link
+        width: 130,
+        height: 130
+    });
+
+</script>
+</body>
+</html>

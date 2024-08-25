@@ -2,6 +2,7 @@ package kz.aitu.abiturqueue.controller;
 
 import kz.aitu.abiturqueue.model.entity.Ticket;
 import kz.aitu.abiturqueue.model.entity.TimeSlot;
+import kz.aitu.abiturqueue.model.entity.User;
 import kz.aitu.abiturqueue.repository.TicketRepository;
 import kz.aitu.abiturqueue.repository.TimeSlotRepository;
 import kz.aitu.abiturqueue.service.TimeSlotService;
@@ -28,6 +29,17 @@ public class TimeSlotController {
         return timeSlotService.getAll();
     }
 
+    @GetMapping("/get-all-online/{tableNumber}")
+    public List<TimeSlot> getAllOnline(@PathVariable Long tableNumber) {
+        return timeSlotService.getAllOnline(tableNumber);
+    }
+
+    @GetMapping("/get-all-table/{tableNumber}")
+    public List<TimeSlot> getAllTable(@PathVariable Long tableNumber) {
+        return timeSlotService.getAllOnline(tableNumber);
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<TimeSlot> getById(@PathVariable(value = "id") Long id){
         TimeSlot timeSlot = this.timeSlotService.getByIdThrowException(id);
@@ -50,8 +62,36 @@ public class TimeSlotController {
         return timeSlotRepository.save(timeSlot);
     }
 
+    @GetMapping("/get-next-online-ticket/{table}")
+    public User getFirstOnlineUser(@PathVariable Long table){
+        return this.timeSlotService.getFirstOnlineByStatusOrderByTime(table);
+    }
+
     @GetMapping("/is-user-select/{userId}")
     public boolean isUserSelect(@PathVariable Long userId){
         return timeSlotService.isUserSelectTheTimeSlot(userId);
     }
+
+    @PutMapping("/complete/{slotId}")
+    public ResponseEntity<TimeSlot> completeSlot(@PathVariable Long slotId) {
+        TimeSlot timeSlot = timeSlotRepository.findById(slotId)
+                .orElseThrow(() -> new RuntimeException("Time Slot not found"));
+
+        timeSlot.setStatus("COMPLETED");
+        TimeSlot updatedTimeSlot = timeSlotRepository.save(timeSlot);
+        return ResponseEntity.ok(updatedTimeSlot);
+    }
+
+    @PostMapping("/invite-next-user/{table}")
+    public ResponseEntity<User> inviteNextUser(@PathVariable Long table) {
+        User invitedUser = timeSlotService.getFirstOnlineByStatusOrderByTime(table);
+        if (invitedUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(invitedUser);
+    }
+
+
+
+
 }

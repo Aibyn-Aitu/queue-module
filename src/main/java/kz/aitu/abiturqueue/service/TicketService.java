@@ -64,7 +64,7 @@ public class TicketService {
                     .build();
             ticketList.add(ticket);
         }
-        for (int i = 700; i < 900; i++) {
+        for (int i = 1200; i < 1600; i++) {
             var ticket = Ticket.builder()
                     .createdTimestamp(now.getTime() + i)
                     .status("CREATED")
@@ -87,6 +87,7 @@ public class TicketService {
                 .stream()
                 .filter(ticket -> !"PROGRESS".equals(ticket.getStatus()))
                 .filter(ticket -> !"CANCEL".equals(ticket.getStatus()))
+                .filter(ticket -> !"ONLINE".equals(ticket.getStatus()))
                 .filter(ticket -> ticket.getCreatedTimestamp() <= startOfToday)
                 .map(Ticket::getId)
                 .toList();

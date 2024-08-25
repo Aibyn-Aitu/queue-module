@@ -30,6 +30,11 @@ public class UserService {
                 (ExceptionDescription.CustomNotFoundException, "User", "id", id)));
     }
 
+    public User getByTicketId(Long id) {
+        return this.getByTicket(id).orElseThrow(() -> new CustomNotFoundException(String.format
+                (ExceptionDescription.CustomNotFoundException, "User", "id", id)));
+    }
+
     public Optional<User> getByIin(String iin){
         return this.userRepository.findUserByIin(iin);
     }

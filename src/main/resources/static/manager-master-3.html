@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Manager Page 3</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-app="timeSlotApp" ng-controller="TimeSlotController as manager">
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3" ng-class="{'bg-danger': manager.stats.availableSlots > 0}">
+                <div class="card-header">Доступные слоты {{manager.stats.availableSlots}}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3" ng-class="{'bg-warning': manager.stats.occupiedSlots > 0}">
+                <div class="card-header">Занятые слоты {{manager.stats.occupiedSlots}}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3" ng-class="{'bg-info': manager.stats.completedSlots > 0}">
+                <div class="card-header">Завершенные слоты {{manager.stats.completedSlots}}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Всего слотов {{manager.stats.totalSlots}}</div>
+            </div>
+        </div>
+    </div>
+    <h1 class="text-center">Manager Master 3</h1>
+
+    <button class="btn btn-large btn-primary" ng-click="manager.assignNextOnlineUser()">Пригласить следующего пользователя</button>
+
+    <h2 class="mt-4">Обработанные слоты</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">ID слота</th>
+            <th scope="col">Время слота</th>
+            <th scope="col">ID билета</th>
+            <th scope="col">Фамилия</th>
+            <th scope="col">Имя</th>
+            <th scope="col">Статус</th>
+            <th scope="col">Стол</th>
+            <th scope="col">Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="slot in manager.processedSlots | filter:{tableNumber: 3} | orderBy:'time'">
+            <th scope="row">{{slot.id}}</th>
+            <td>{{slot.time}}</td>
+            <td>{{slot.ticketId}}</td>
+            <td>{{slot.user.lastname}}</td>
+            <td>{{slot.user.firstname}}</td>
+            <td>{{slot.status}}</td>
+            <td>{{slot.tableNumber}}</td>
+            <td>
+                <button class="btn btn-info" ng-click="manager.completeSlot(slot.id)">Завершить</button>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+
+<script>
+    angular.module('timeSlotApp', [])
+        .controller('TimeSlotController', ['$http', '$interval', function($http, $interval) {
+            var self = this;
+            self.processedSlots = [];
+            self.stats = {};
+            self.tableId = 3;
+
+            // Function to refresh slot data and fetch associated user details
+            self.refreshStatsAndSlots = function() {
+                $http.get('/api/time-slot/get-all-online/' + self.tableId)
+                    .then(function(response) {
+                        self.processedSlots = response.data;
+                        self.processedSlots.forEach(function(slot) {
+                            if (slot.ticketId) {
+                                self.fetchUserDetails(slot);
+                            }
+                        });
+                        // Update statistics based on slots
+                        self.updateStats();
+                    });
+            };
+
+            // Fetch user details for a given slot
+            self.fetchUserDetails = function(slot) {
+                $http.get('/api/user/find/ticket/' + slot.ticketId)
+                    .then(function(response) {
+                        slot.user = response.data;
+                    }, function(error) {
+                        console.error('Failed to fetch user details', error);
+                    });
+            };
+
+            // Update statistics for the dashboard
+            self.updateStats = function() {
+                self.stats.availableSlots = self.processedSlots.filter(slot => slot.status === 'AVAILABLE').length;
+                self.stats.occupiedSlots = self.processedSlots.filter(slot => slot.status === 'OCCUPIED').length;
+                self.stats.completedSlots = self.processedSlots.filter(slot => slot.status === 'COMPLETED').length;
+                self.stats.totalSlots = self.processedSlots.length;
+            };
+
+            self.assignNextOnlineUser = function() {
+                $http.get('/api/time-slot/get-next-online-ticket/' + self.tableId)
+                    .then(function(response) {
+                        console.log("Пользователь приглашен:", response.data);
+                        self.refreshStatsAndSlots();
+                    }, function(error) {
+                        console.log("Ошибка приглашения:", error.data);
+                    });
+            };
+
+            self.completeSlot = function(slotId) {
+                $http.put('/api/time-slot/complete/' + slotId)
+                    .then(function(response) {
+                        console.log("Слот завершен:", response.data);
+                        self.refreshStatsAndSlots();
+                    }, function(error) {
+                        console.log("Ошибка завершения слота:", error.data);
+                    });
+            };
+
+            // Initial data load
+            self.refreshStatsAndSlots();
+        }]);
+
+</script>
+</body>
+</html>
