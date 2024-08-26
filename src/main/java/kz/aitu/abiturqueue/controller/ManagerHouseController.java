@@ -1,5 +1,6 @@
 package kz.aitu.abiturqueue.controller;
 
+import kz.aitu.abiturqueue.model.entity.Ticket;
 import kz.aitu.abiturqueue.model.entity.TicketHouse;
 import kz.aitu.abiturqueue.service.TicketHouseService;
 import lombok.AllArgsConstructor;
@@ -67,6 +68,11 @@ public class ManagerHouseController {
     public ResponseEntity<TicketHouse> toCancelTicket(@PathVariable Long id) {
         return ResponseEntity.ok(ticketService.toCancelTicketHouse(id));
     }
+    @PutMapping("/{id}/toAddedCancel")
+    public ResponseEntity<TicketHouse> toCancelAddedTicket(@PathVariable Long id) {
+        return ResponseEntity.ok(ticketService.toCancelAddedTicket(id));
+    }
+
 
     @PutMapping("/{id}/toCancelFromAdmin")
     public ResponseEntity<TicketHouse> toCancelTicketFromAdmin(@PathVariable Long id) {

@@ -109,11 +109,11 @@
             };
 
             self.toCancelTicket = function(id) {
-                $http.put('/api/manager/' + id + '/toAddedCancel')
+                $http.put('/api/manager-house/' + id + '/toAddedCancel')
                     .then(function(response) {
                         console.log("Cancelled ticket");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/ready')
+                        $http.get('/api/display-house/tickets/added')
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });

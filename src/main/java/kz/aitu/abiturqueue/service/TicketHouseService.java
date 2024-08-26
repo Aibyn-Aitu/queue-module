@@ -249,6 +249,23 @@ public class TicketHouseService {
         return updatedTicketHouse;
     }
 
+    public TicketHouse toCancelAddedTicket(Long id) {
+        log.info("Moving ticket with id {} to cancel", id);
+        var ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("TicketHouse not found with id " + id));
+
+        if(!ticket.getStatus().equals("ADDED")) {
+            throw new IllegalStateException("TicketHouse with id " + id + " is not in CREATED status");
+        }
+
+        ticket.setStatus("CANCEL");
+        ticket.setStartCancelTimestamp(System.currentTimeMillis());
+
+        var updatedTicketHouse = ticketRepository.save(ticket);
+        log.info("Moved ticket to wait: {}", updatedTicketHouse);
+        return updatedTicketHouse;
+    }
+
     public TicketHouse toCancelTicketHouseFromAdmin(Long id) {
         log.info("Moving ticket with id {} to cancel", id);
         var ticket = ticketRepository.findById(id)
