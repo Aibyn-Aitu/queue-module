@@ -251,6 +251,23 @@ public class TicketService {
         return updatedTicket;
     }
 
+    public Ticket toCancelAddedTicket(Long id) {
+        log.info("Moving ticket with id {} to cancel", id);
+        var ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id " + id));
+
+        if(!ticket.getStatus().equals("ADDED")) {
+            throw new IllegalStateException("Ticket with id " + id + " is not in CREATED status");
+        }
+
+        ticket.setStatus("CANCEL");
+        ticket.setStartCancelTimestamp(System.currentTimeMillis());
+
+        var updatedTicket = ticketRepository.save(ticket);
+        log.info("Moved ticket to wait: {}", updatedTicket);
+        return updatedTicket;
+    }
+
     public Ticket toCancelTicketFromAdmin(Long id) {
         log.info("Moving ticket with id {} to cancel", id);
         var ticket = ticketRepository.findById(id)

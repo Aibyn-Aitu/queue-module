@@ -36,6 +36,7 @@
             <th scope="col">Время регистрации</th>
             <th scope="col">Тип талона</th>
             <th scope="col">Status</th>
+            <th scope="col">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -44,6 +45,7 @@
             <td>{{ticket.startAddedTimestamp | date:'HH:mm'}}</td>
             <td>{{ticket.type}}</td>
             <td>{{ticket.status}}</td>
+            <td><button class="btn btn-danger" ng-click="manager.toCancelTicket(ticket.id)">Удалить</button></td>
         </tr>
         </tbody>
     </table>
@@ -107,7 +109,7 @@
             };
 
             self.toCancelTicket = function(id) {
-                $http.put('/api/manager/' + id + '/toCancel')
+                $http.put('/api/manager/' + id + '/toAddedCancel')
                     .then(function(response) {
                         console.log("Cancelled ticket");
                         // Reload served tickets
