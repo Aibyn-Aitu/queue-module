@@ -77,6 +77,11 @@ public class DisplayController {
         return ticketRepository.findByStatusOrderByStartCheckTimestampAsc("CHECK");
     }
 
+    @GetMapping("/tickets/added")
+    public List<Ticket> getAddedTickets() {
+        return ticketRepository.findByStatusOrderByStartAddedTimestampAsc("ADDED");
+    }
+
     @GetMapping("/tickets/served")
     public List<Ticket> getServedTickets() {
         return ticketRepository.findByStatusOrderByStartWaitingTimestampAsc("SERVED");

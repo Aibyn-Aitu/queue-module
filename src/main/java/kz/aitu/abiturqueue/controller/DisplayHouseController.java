@@ -2,6 +2,7 @@ package kz.aitu.abiturqueue.controller;
 
 import kz.aitu.abiturqueue.model.dto.CreatedTicketHouseDto;
 import kz.aitu.abiturqueue.model.dto.TicketStatisticDTO;
+import kz.aitu.abiturqueue.model.entity.Ticket;
 import kz.aitu.abiturqueue.model.entity.TicketHouse;
 import kz.aitu.abiturqueue.repository.TicketHouseRepository;
 import kz.aitu.abiturqueue.service.TicketHouseService;
@@ -89,6 +90,11 @@ public class DisplayHouseController {
     @GetMapping("/tickets/served/girls")
     public List<TicketHouse> getServedGirlsTickets() {
         return ticketRepository.findByStatusAndTypeOrderByStartAddedTimestampAsc("SERVED", "BENEFIT");
+    }
+
+    @GetMapping("/tickets/added")
+    public List<TicketHouse> getAddedTickets() {
+        return ticketRepository.findByStatusOrderByStartAddedTimestampAsc("ADDED");
     }
 
     @GetMapping("/tickets/served/{type}")
