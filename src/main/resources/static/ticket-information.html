@@ -100,7 +100,7 @@
                                 console.log('Ticket:', response.data);
                                 self.ticketNumber = response.data.number;
                                 self.tableNumber = response.data.tableNumber;
-                                var date = new Date(response.data.startAddedTimestamp);
+                                var date = new Date(response.data.startReadyTimestamp);
                                 self.createdTime = date.toLocaleString();
                             })
                             .catch(function (error) {
