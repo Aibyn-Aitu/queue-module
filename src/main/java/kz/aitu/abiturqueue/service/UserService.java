@@ -75,7 +75,7 @@ public class UserService {
                 Ticket ticket = ticketRepository.findFirstByStatusAndTypeOrderByNumberAsc("CREATED", "BASIC").orElse(null);
                 if (ticket != null) {
                     ticket.setStatus("READY");
-                    ticket.setStartAddedTimestamp(System.currentTimeMillis());
+                    ticket.setStartReadyTimestamp(System.currentTimeMillis());
                     user.setTicketId(ticket.getId());
                     userRepository.save(user);
                     return ticket.getNumber();
