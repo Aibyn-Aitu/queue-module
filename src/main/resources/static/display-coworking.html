@@ -89,7 +89,7 @@
             <div class="row flex-grow-1">
                 <div class="col text-center">
                     <h2 class="text">Магистратура</h2>
-                    <h5 class="text">Чтобы зарегистрироваться в очереди, отсканируйте QR-код</h5>
+                    <h5 class="text">Если вы не зарегистрировались на определенное время, то отсканируйте QR-код</h5>
                     <div class="qr-code-container">
                         <div id="qrcode" class="qr-code"></div>
                     </div>
@@ -103,17 +103,6 @@
                         <div class="card-body">
                             <h3 class="big-font text">{{ticket.number}}</h3>
                             <h4 class="text">{{ticket.tableNumber}} стол</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <h3 class="text">Подойдите в Coworking</h3>
-            <div class="flex-container">
-                <div class="flex-item" ng-repeat="ticket in queue.coworkingTickets | orderBy: 'type'">
-                    <div class="card text-center"
-                         ng-class="{'bg-warning': ticket.type === 'BASIC', 'bg-primary': ticket.type === 'BENEFIT'}">
-                        <div class="card-body">
-                            <h4 class="big-font text">{{ticket.number}}</h4>
                         </div>
                     </div>
                 </div>
