@@ -89,6 +89,10 @@
             <div class="row flex-grow-1">
                 <div class="col text-center">
                     <h2 class="text">Магистратура</h2>
+                    <h5 class="text">Отсканируйте QR-код, чтобы зарегистрироваться в очереди</h5>
+                    <div class="qr-code-container">
+                        <div id="qrcode" class="qr-code"></div>
+                    </div>
                 </div>
             </div>
             <h3 class="text">Сейчас подошла ваша очередь</h3>
@@ -159,7 +163,7 @@
 
     // Generate QR code using qrcode.js
     var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: "https://queue-aitu.up.railway.app/user-page2.html", // Replace with your registration link
+        text: "https://queue-aitu.up.railway.app/master.html", // Replace with your registration link
         width: 130,
         height: 130
     });
