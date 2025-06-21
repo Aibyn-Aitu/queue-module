@@ -72,6 +72,11 @@ public class DisplayController {
         return ticketService.getTodayTicketsExcludingStatus("CREATED");
     }
 
+    @GetMapping("/tickets/check/volunteerNumber/{volunteerNumber}")
+    public List<Ticket> getCheckTickets(@PathVariable Integer volunteerNumber) {
+        return ticketRepository.findByStatusAndVolunteerNumberOrderByStartCheckTimestampAsc("CHECK", volunteerNumber);
+    }
+
     @GetMapping("/tickets/check")
     public List<Ticket> getCheckTickets() {
         return ticketRepository.findByStatusOrderByStartCheckTimestampAsc("CHECK");

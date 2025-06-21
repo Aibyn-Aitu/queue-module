@@ -59,4 +59,7 @@ public class Ticket {
 
     @Column(name = "tableNumber")
     private Integer tableNumber;
+
+    @Column(name = "volunteerNumber")
+    private Integer volunteerNumber;
 }

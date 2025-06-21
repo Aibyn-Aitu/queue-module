@@ -106,17 +106,6 @@
                     </div>
                 </div>
             </div>
-            <h3 class="text">Подойдите в Coworking</h3>
-            <div class="flex-container">
-                <div class="flex-item" ng-repeat="ticket in queue.coworkingTickets | orderBy: 'type'">
-                    <div class="card text-center"
-                         ng-class="{'bg-warning': ticket.type === 'BASIC', 'bg-primary': ticket.type === 'BENEFIT'}">
-                        <div class="card-body">
-                            <h4 class="big-font text">{{ticket.number}}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <h3 class="text">Подходите к столу для проверки документов</h3>
             <div class="flex-container">
                 <div class="flex-item" ng-repeat="ticket in queue.checkTickets | orderBy: 'type'">
@@ -124,6 +113,7 @@
                          ng-class="{'bg-primary': ticket.type === 'BASIC', 'bg-success': ticket.type === 'BENEFIT'}">
                         <div class="card-body">
                             <h4 class="big-font text">{{ticket.number}}</h4>
+                            <h5 class="text">{{ticket.volunteerNumber}} стол</h5>
                         </div>
                     </div>
                 </div>

@@ -31,10 +31,10 @@ public class ManagerController {
         return ResponseEntity.ok(ticketService.inviteNextTicketToCoworking(type));
     }
 
-    @PostMapping("/invite/check/{type}")
-    public ResponseEntity<Ticket> inviteNextTicketToCheck(@PathVariable String type) {
+    @PostMapping("/invite/check/{type}/{table}")
+    public ResponseEntity<Ticket> inviteNextTicketToCheck(@PathVariable String type, @PathVariable Integer table) {
 
-        return ResponseEntity.ok(ticketService.inviteNextTicketToCheck(type));
+        return ResponseEntity.ok(ticketService.inviteNextTicketToCheck(type, table));
     }
 
     @PostMapping("/invite/benefit/{type}/{table}")

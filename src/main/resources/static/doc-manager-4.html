@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Manager Page 3</title>
+    <title>Document Manager 4</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
 </head>
@@ -11,8 +11,8 @@
 
     <div class="row">
         <div class="col-md-3">
-            <div class="card text-white bg-secondary mb-3" ng-class="{'bg-danger':manager.stats.addedCount > 0}">
-                <div class="card-header">В ожидании волонтеров {{manager.stats.addedCount}}</div>
+            <div class="card text-white bg-secondary mb-3" ng-class="{'bg-danger': manager.stats.addedCount > 0}">
+                <div class="card-header">В ожидании {{manager.stats.addedCount}}</div>
             </div>
         </div>
         <div class="col-md-3">
@@ -20,22 +20,23 @@
                 <div class="card-header">Проверка документов {{manager.stats.checkCount}}</div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card text-white bg-secondary mb-3" ng-class="{'bg-info': manager.stats.readyCount > 0}">
-                <div class="card-header">Ждут тех секретарей {{manager.stats.readyCount}}</div>
+                <div class="card-header">В ожидании тех секретарей {{manager.stats.readyCount}}</div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="card text-white bg-success mb-3">
                 <div class="card-header">Завершено {{manager.stats.progressCount}}</div>
             </div>
         </div>
+
     </div>
-    <h1 class="text-center">Manager 3</h1>
+    <h1 class="text-center">Document Manager 4</h1>
 
-    <button class="btn btn-large btn-primary" ng-click="manager.inviteNextTicket()">Invite Next Ticket</button>
+    <button class="btn btn-large btn-info" ng-click="manager.inviteNextTicket()">Invite Next Ticket</button>
 
-    <h2 class="mt-4">Served Tickets</h2>
+    <h2 class="mt-4">Талоны</h2>
     <table class="table">
         <thead>
         <tr>
@@ -48,10 +49,11 @@
         <tbody>
         <tr ng-repeat="ticket in manager.servedTickets | orderBy:'startServedTimestamp'">
             <th scope="row">{{ticket.number}}</th>
-            <td>{{ticket.startWaitingTimestamp | date:'HH:mm'}}</td>
+            <td>{{ticket.startAddedTimestamp | date:'HH:mm'}}</td>
             <td>{{ticket.status}}</td>
             <td>
-                <button class="btn btn-info" ng-click="manager.toProgressTicket(ticket.id)">Завершить</button>
+                <button class="btn btn-success" ng-click="manager.toProgressTicket(ticket.id)">Завершить</button>
+                <button class="btn btn-danger" ng-click="manager.toCancelTicket(ticket.id)">Удалить</button>
             </td>
         </tr>
         </tbody>
@@ -67,7 +69,7 @@
             self.type = 'BASIC';
 
             // Fetch served tickets
-            $http.get('/api/display/tickets/served/table/' + 3)
+            $http.get('/api/display/tickets/check/volunteerNumber/' + 4)
                 .then(function(response) {
                     self.servedTickets = response.data;
                 });
@@ -91,11 +93,11 @@
             }, 60000);
 
             self.inviteNextTicket = function() {
-                $http.post('/api/manager/invite/' + self.type + '/' + 3)
+                $http.post('/api/manager/invite/check/' + self.type + '/' + 4)
                     .then(function(response) {
                         console.log("Invited next ticket");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/served/table/' + 3)
+                        $http.get('/api/display/tickets/check/volunteerNumber/' + 4)
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });
@@ -103,11 +105,11 @@
             };
 
             self.toProgressTicket = function(id) {
-                $http.put('/api/manager/' + id + '/toProgress')
+                $http.put('/api/manager/' + id + '/toReady')
                     .then(function(response) {
-                        console.log("Moved ticket to progress");
+                        console.log("Moved ticket to wait");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/served/table/' + 3)
+                        $http.get('/api/display/tickets/check/volunteerNumber/' + 4)
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });
@@ -115,11 +117,11 @@
             };
 
             self.toCancelTicket = function(id) {
-                $http.put('/api/manager/' + id + '/toCancel')
+                $http.put('/api/manager/' + id + '/toDeleteCheck')
                     .then(function(response) {
                         console.log("Cancelled ticket");
                         // Reload served tickets
-                        $http.get('/api/display/tickets/served/table/' + 3)
+                        $http.get('/api/display/tickets/check/volunteerNumber/' + 4)
                             .then(function(response) {
                                 self.servedTickets = response.data;
                             });

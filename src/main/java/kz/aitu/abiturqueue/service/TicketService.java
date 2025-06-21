@@ -123,6 +123,20 @@ public class TicketService {
         nextTicket.setType(type);
         return ticketRepository.save(nextTicket);
     }
+    public Ticket inviteNextTicketToCheck(String type, Integer table) {
+        log.info("Getting first waiting ticket");
+        var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartAddedTimestampAsc("ADDED", type)
+                .orElseGet(() -> ticketRepository.findFirstByStatusAndTypeOrderByStartAddedTimestampAsc("ADDED", "BASIC")
+                        .orElseThrow(() -> new ResourceNotFoundException("No waiting tickets found")));
+
+
+        log.info("Retrieved ticket: {}", nextTicket);
+        nextTicket.setStatus("CHECK");
+        nextTicket.setVolunteerNumber(table);
+        nextTicket.setStartCheckTimestamp(System.currentTimeMillis());
+        nextTicket.setType(type);
+        return ticketRepository.save(nextTicket);
+    }
 
     public Ticket inviteNextBenefitTicketToTable(String type, Integer table) {
         log.info("Getting first waiting ticket");
@@ -153,19 +167,7 @@ public class TicketService {
         return ticketRepository.save(nextTicket);
     }
 
-    public Ticket inviteNextTicketToCheck(String type) {
-        log.info("Getting first waiting ticket");
-        var nextTicket = ticketRepository.findFirstByStatusAndTypeOrderByStartAddedTimestampAsc("ADDED", type)
-                .orElseGet(() -> ticketRepository.findFirstByStatusAndTypeOrderByStartAddedTimestampAsc("ADDED", "BASIC")
-                        .orElseThrow(() -> new ResourceNotFoundException("No waiting tickets found")));
 
-
-        log.info("Retrieved ticket: {}", nextTicket);
-        nextTicket.setStatus("CHECK");
-        nextTicket.setStartCheckTimestamp(System.currentTimeMillis());
-        nextTicket.setType(type);
-        return ticketRepository.save(nextTicket);
-    }
 
     public Ticket toProgressTicket(Long id) {
         log.info("Moving ticket with id {} to progress", id);
@@ -189,7 +191,7 @@ public class TicketService {
         var ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id " + id));
 
-        if(!ticket.getStatus().equals("COWORKING")) {
+        if(!ticket.getStatus().equals("CHECK")) {
             throw new IllegalStateException("Ticket with id " + id + " is not in COWORKING status");
         }
 

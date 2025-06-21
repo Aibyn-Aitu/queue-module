@@ -26,6 +26,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     List<Ticket> findByStatusOrderByStartAddedTimestampAsc(String status);
     List<Ticket> findByStatusOrderByStartCheckTimestampAsc(String status);
+    List<Ticket> findByStatusAndVolunteerNumberOrderByStartCheckTimestampAsc(String status, Integer volunteerNumber);
     List<Ticket> findByStatusAndTableNumberOrderByStartWaitingTimestampAsc(String status, Integer tableNum);
     List<Ticket> findByStatusAndTableNumberOrderByStartReadyTimestampAsc(String status, Integer tableNum);
 
